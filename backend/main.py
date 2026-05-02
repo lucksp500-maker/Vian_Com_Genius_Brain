@@ -11,6 +11,10 @@ from pathlib import Path
 
 from backend.core.commandos.hud_bridge import router as hud_router
 from backend.core.guard.guard_router import router as guard_router
+from backend.api.local_index_router import router as local_index_router
+from backend.api.local_index_router import preview_router as local_preview_router
+from backend.api.audit_router import router as audit_router
+from backend.api.audit_router import undo_router
 
 app = FastAPI(
     title="Vian CommandOS × Genius Brain",
@@ -34,6 +38,10 @@ app.add_middleware(
 
 app.include_router(hud_router)
 app.include_router(guard_router)
+app.include_router(local_index_router)
+app.include_router(local_preview_router)
+app.include_router(audit_router)
+app.include_router(undo_router)
 
 # React 프론트엔드 SPA 서빙 (빌드 후)
 _frontend_dist = Path(__file__).parent.parent / "frontend" / "dist"
