@@ -21,12 +21,15 @@ from backend.core.browser.browser_automation_adapter import (
     BrowserResult,
     _ALLOWED_EXEC_STATES,
 )
-from backend.core.commandos.action_spec import ActionSpec
+from backend.core.commandos.action_spec import ActionSpec, ExecutionState
+from backend.core.audit.audit_ledger import AuditLedger, AuditRecord  # I-03/I-04
 
 router = APIRouter(prefix="/api/v1/browser", tags=["browser"])
 
 # 싱글턴 어댑터 (앱 수명)
 _adapter = BrowserAutomationAdapter()
+# I-03/I-04 Fix: browser 이벤트 Audit 기록용 싱글턴
+_ledger = AuditLedger()
 
 
 # ─── 요청/응답 스키마 ─────────────────────────────────────────────
@@ -109,6 +112,24 @@ async def dispatch_command(req: DispatchRequest) -> DispatchResponse:
         )
 
     result = _adapter.dispatch(req.action_spec)
+
+    # I-04 Fix: dispatch 성공 시 AuditLedger 기록 — browser 명령 큐 등록 흔적 없음 방지
+    if result.queued:
+        try:
+            await _ledger.record(AuditRecord(
+                command=req.action_spec.intent or req.action_spec.raw_input,
+                action_spec_id=req.action_spec.action_id,
+                intent_class=req.action_spec.intent or "",
+                risk_class=req.action_spec.risk_level,
+                guard_decision=req.action_spec.guard_result or "guard_approved",
+                approval_result="dispatched",
+                execution_result="queued",
+                confidence=req.action_spec.confidence_score,
+                raw_input=req.action_spec.raw_input,
+            ))
+        except Exception:
+            pass  # Audit 실패가 dispatch 흐름을 막으면 안 됨
+
     return DispatchResponse(
         command_id=result.command_id,
         queued=result.queued,
@@ -155,6 +176,24 @@ async def receive_result(req: ResultRequest) -> ResultResponse:
         word_count=req.word_count,
     )
     result = _adapter.receive_result(browser_result)
+
+    # I-03 Fix: 브라우저 결과 수신 시 AuditLedger 기록 — 저장 완료 여부 추적
+    try:
+        approval_result = "blocked" if result.blocked else "received"
+        execution_result = "injection_blocked" if result.injection_risk else "stored"
+        await _ledger.record(AuditRecord(
+            command=f"{req.action_type}: {req.url}",
+            action_spec_id=req.command_id,
+            intent_class=req.action_type,
+            risk_class="low",
+            guard_decision="guard_approved",
+            approval_result=approval_result,
+            execution_result=execution_result,
+            raw_input=req.url,
+        ))
+    except Exception:
+        pass  # Audit 실패가 result 흐름을 막으면 안 됨
+
     return ResultResponse(
         success=result.success,
         blocked=result.blocked,
@@ -195,14 +234,23 @@ async def collect_push(req: CollectRequest) -> CollectResponse:
     # evaluate()로 risk/target_type 기반 정책 검사 추가
     try:
         from backend.core.guard.policy_engine import PolicyResult, evaluate
-        guard_result = evaluate(spec)
-        if guard_result.result == PolicyResult.deny:
+        guard_eval = evaluate(spec)
+        if guard_eval.result == PolicyResult.deny:
             return CollectResponse(
                 action_id=None,
                 blocked=True,
-                block_reason=f"Guard 정책 거부: {guard_result.reason}",
+                block_reason=f"Guard 정책 거부: {guard_eval.reason}",
                 injection_risk=False,
             )
+        # I-02 Fix: Guard 결과를 spec에 기록 — guard_result/guard_reason/execution_state 반영
+        # 이전에는 spec이 guard_result=None, execution_state=pending으로 저장되어
+        # dispatch() H-18 검증 실패 + Preview UI에서 guard 상태 표시 불가
+        spec.guard_result = guard_eval.result.value
+        spec.guard_reason = guard_eval.reason
+        if guard_eval.result == PolicyResult.allow:
+            spec.execution_state = ExecutionState.guard_approved.value
+        elif guard_eval.result == PolicyResult.ask:
+            spec.requires_approval = True
     except Exception:
         # Guard 실패 시 안전 측(차단) 처리 — C-08 원칙과 동일
         return CollectResponse(

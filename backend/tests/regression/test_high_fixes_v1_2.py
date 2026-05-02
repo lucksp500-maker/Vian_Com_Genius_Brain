@@ -243,8 +243,10 @@ async def test_h11_undo_record_wrong_token_returns_403():
                 "before_state": {"source_path": "/tmp/a", "dest_path": "/tmp/b"},
             },
         )
-    assert resp.status_code == 403, (
-        f"H-11 회귀: 잘못된 토큰으로 /undo/record 접근 시 403 아님. status={resp.status_code}"
+    # I-07 Fix 반영: VIAN_INTERNAL_TOKEN 미설정 시 503 반환 (하드코딩 기본값 제거)
+    # 403 = 잘못된 토큰, 503 = 토큰 미설정(엔드포인트 비활성화) — 둘 다 접근 차단 정상
+    assert resp.status_code in (403, 503), (
+        f"H-11 회귀: /undo/record 잘못된 토큰 접근 시 403/503 아님. status={resp.status_code}"
     )
 
 

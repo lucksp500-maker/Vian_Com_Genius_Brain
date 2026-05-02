@@ -57,6 +57,11 @@ async def create_action_spec(req: ActionSpecCreateRequest) -> ActionSpecResponse
     if guard_eval.result == PolicyResult.ask or guard_eval.result == PolicyResult.deny:
         spec.requires_approval = True
 
+    # I-01 Fix: Guard allow → execution_state=guard_approved
+    # pending 상태로 저장되면 dispatch() H-18 검증에서 차단됨 — allow된 spec은 즉시 dispatch 가능해야 함
+    if guard_eval.result == PolicyResult.allow:
+        spec.execution_state = ExecutionState.guard_approved.value
+
     _store[spec.action_id] = spec
 
     preview_url: Optional[str] = None
@@ -108,6 +113,18 @@ async def execute_action(action_id: str) -> dict:
     if spec.guard_result == PolicyResult.deny.value:
         raise HTTPException(status_code=403, detail="Guard denied this action")
 
+    # I-05 Fix: 이미 승인/거부/실행된 spec 재실행 차단 — 중복 Audit 기록 방지
+    _TERMINAL_STATES = {
+        ExecutionState.user_approved.value,
+        ExecutionState.user_rejected.value,
+        ExecutionState.executed.value,
+    }
+    if spec.execution_state in _TERMINAL_STATES:
+        raise HTTPException(
+            status_code=409,
+            detail=f"이미 처리된 ActionSpec입니다 (execution_state={spec.execution_state})",
+        )
+
     spec.execution_state = ExecutionState.user_approved.value
     _store[action_id] = spec
 
@@ -140,6 +157,18 @@ async def reject_action(action_id: str) -> dict:
     spec = _store.get(action_id)
     if spec is None:
         raise HTTPException(status_code=404, detail=f"ActionSpec not found: {action_id}")
+
+    # I-08 Fix: 이미 거부/승인/실행된 spec 재거부 차단 — 중복 Audit 기록 방지
+    _TERMINAL_STATES_REJECT = {
+        ExecutionState.user_approved.value,
+        ExecutionState.user_rejected.value,
+        ExecutionState.executed.value,
+    }
+    if spec.execution_state in _TERMINAL_STATES_REJECT:
+        raise HTTPException(
+            status_code=409,
+            detail=f"이미 처리된 ActionSpec입니다 (execution_state={spec.execution_state})",
+        )
 
     spec.execution_state = ExecutionState.user_rejected.value
     _store[action_id] = spec

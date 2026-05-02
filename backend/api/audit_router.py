@@ -20,12 +20,20 @@ _ledger = AuditLedger()
 _journal = UndoJournal()
 
 # H-11 Fix: 내부 전용 엔드포인트 토큰 검증
-# 환경변수 VIAN_INTERNAL_TOKEN 미설정 시 개발용 기본값 사용
-_INTERNAL_TOKEN = os.environ.get("VIAN_INTERNAL_TOKEN", "vian-internal-v1")
+# I-07 Fix: 환경변수 VIAN_INTERNAL_TOKEN 미설정 시 None 처리 — 하드코딩 토큰 소스 노출 방지
+# 미설정 시 /undo/record 엔드포인트 비활성화 (503) → 명시적 설정 강제
+_INTERNAL_TOKEN: Optional[str] = os.environ.get("VIAN_INTERNAL_TOKEN") or None
 
 
 def _verify_internal_token(x_internal_token: str = Header(...)) -> None:
-    """POST 쓰기 엔드포인트 내부 전용 토큰 검증. 외부 요청 차단."""
+    """POST 쓰기 엔드포인트 내부 전용 토큰 검증. 외부 요청 차단.
+    I-07 Fix: VIAN_INTERNAL_TOKEN 미설정 시 503 반환 — 하드코딩 기본값 제거
+    """
+    if _INTERNAL_TOKEN is None:
+        raise HTTPException(
+            status_code=503,
+            detail="VIAN_INTERNAL_TOKEN 환경변수가 설정되지 않았습니다. 엔드포인트 비활성화 상태입니다.",
+        )
     if x_internal_token != _INTERNAL_TOKEN:
         raise HTTPException(status_code=403, detail="내부 전용 엔드포인트입니다.")
 
