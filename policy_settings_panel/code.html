@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vian CommandOS | Policy Configuration</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap');
+        
+        body {
+            background-color: #111111;
+            color: #e4e1ed;
+            margin: 0;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+
+        /* Custom scrollbar for HUD feel */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111111;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2c2c2e;
+            border-radius: 2px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#5e5ce6",
+                        "secondary": "#c8c6c8",
+                        "on-surface-variant": "#c7c4d7",
+                        "error": "#ffb4ab",
+                        "on-tertiary": "#502400",
+                        "inverse-surface": "#e4e1ed",
+                        "on-primary": "#1800a7",
+                        "secondary-container": "#474649",
+                        "surface": "#13131b",
+                        "surface-tint": "#c2c1ff",
+                        "primary-fixed": "#e2dfff",
+                        "on-error": "#690005",
+                        "on-primary-fixed-variant": "#332dbc",
+                        "on-primary-fixed": "#0c006b",
+                        "primary": "#c2c1ff",
+                        "primary-fixed-dim": "#c2c1ff",
+                        "on-secondary": "#303032",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "inverse-on-surface": "#302f38",
+                        "surface-container-lowest": "#0e0d15",
+                        "on-tertiary-fixed-variant": "#723600",
+                        "tertiary-container": "#ae5600",
+                        "surface-container-low": "#1b1b23",
+                        "on-tertiary-container": "#ffefe7",
+                        "on-secondary-fixed-variant": "#474649",
+                        "inverse-primary": "#4d4ad5",
+                        "on-primary-container": "#f4f1ff",
+                        "outline": "#918fa0",
+                        "on-surface": "#e4e1ed",
+                        "on-secondary-container": "#b6b4b7",
+                        "on-tertiary-fixed": "#311300",
+                        "secondary-fixed": "#e4e2e4",
+                        "on-secondary-fixed": "#1b1b1d",
+                        "surface-bright": "#393841",
+                        "tertiary-fixed-dim": "#ffb786",
+                        "surface-container-highest": "#34343d",
+                        "on-background": "#e4e1ed",
+                        "surface-container-high": "#2a2932",
+                        "surface-variant": "#34343d",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#ffb786",
+                        "surface-dim": "#13131b",
+                        "outline-variant": "#464554",
+                        "surface-container": "#1f1f27",
+                        "tertiary-fixed": "#ffdcc6",
+                        "error-container": "#93000a",
+                        "background": "#13131b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "3xl": "64px",
+                        "xl": "32px",
+                        "2xl": "48px",
+                        "sm": "8px",
+                        "gutter": "16px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "lg": "24px",
+                        "container-margin": "24px"
+                    },
+                    "fontFamily": {
+                        "h1": ["SF Pro Display"],
+                        "label-md": ["manrope"],
+                        "display-lg": ["SF Pro Display"],
+                        "body-md": ["manrope"],
+                        "h2": ["SF Pro Display"],
+                        "body-lg": ["manrope"],
+                        "caption": ["manrope"]
+                    },
+                    "fontSize": {
+                        "h1": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "h2": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "caption": ["12px", {"lineHeight": "1.4", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-[#111111] overflow-hidden">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-14 bg-[#1c1c1e] border-b border-transparent">
+<div class="flex items-center gap-8">
+<span class="text-lg font-black tracking-widest text-white uppercase font-h1">Vian CommandOS</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-mono text-xs tracking-tighter text-gray-500 hover:text-gray-300 transition-colors" href="#">HUD</a>
+<a class="font-mono text-xs tracking-tighter text-gray-500 hover:text-gray-300 transition-colors" href="#">Audit Ledger</a>
+<a class="font-mono text-xs tracking-tighter text-gray-500 hover:text-gray-300 transition-colors" href="#">Undo Journal</a>
+<a class="font-mono text-xs tracking-tighter text-[#5e5ce6] border-b border-[#5e5ce6] pb-1" href="#">Policy</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-gray-400 hover:bg-[#2c2c2e] rounded-lg transition-all scale-95 active:opacity-80">
+<span class="material-symbols-outlined">security</span>
+</button>
+<button class="p-2 text-gray-400 hover:bg-[#2c2c2e] rounded-lg transition-all scale-95 active:opacity-80">
+<span class="material-symbols-outlined">monitor_heart</span>
+</button>
+<button class="p-2 text-gray-400 hover:bg-[#2c2c2e] rounded-lg transition-all scale-95 active:opacity-80">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-container overflow-hidden">
+<img alt="User profile" data-alt="A professional headshot of a software architect in a high-tech environment. The lighting is dramatic with cool blue and violet tones, reflecting off a glass surface in the background. The individual has a focused expression, conveying expertise and calm control. The overall aesthetic is sleek and modern, aligned with a premium dark-themed command center interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOTezKosRXYoRoGrFxBmP2hL8NIAS_ysGG8w4u2RryQcsce0OsLquE_R2GJvJB0YZoehvZHh1klByZy1ri9ZadBR9QYSuJ0bQDXBwJeoNd55sGNPlAxtgMl8nDEvV_X84KFT11GNCag5YisYni_BGfNbxW2ZJ9ivmFnqgojDmAGwhFhKaUt2oon-v31WdJPnYYOK7Nrp3q7Pjy6GFT4f_-A4uOrAoyr71KYzbYG4D9lKqIXaWyrz7Esm2VE-e6amcQ_kwKKc0NYE-O"/>
+</div>
+</div>
+</header>
+<div class="flex pt-14 h-screen">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-14 h-[calc(100vh-3.5rem)] flex flex-col p-4 bg-[#1c1c1e] w-64 border-r border-transparent">
+<div class="flex items-center gap-3 mb-8 px-2">
+<div class="w-10 h-10 bg-[#2c2c2e] rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-[#5e5ce6]" data-weight="fill">shield_lock</span>
+</div>
+<div>
+<h3 class="font-mono text-xs font-bold text-white uppercase tracking-widest">Genius Brain</h3>
+<p class="font-mono text-[10px] text-gray-500 uppercase">Nursery V2.0</p>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-3 py-2.5 font-mono text-xs uppercase tracking-widest text-gray-400 hover:text-white hover:bg-[#2c2c2e] rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+                    Audit Ledger
+                </a>
+<a class="flex items-center gap-3 px-3 py-2.5 font-mono text-xs uppercase tracking-widest text-gray-400 hover:text-white hover:bg-[#2c2c2e] rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings_backup_restore</span>
+                    Undo Journal
+                </a>
+<a class="flex items-center gap-3 px-3 py-2.5 font-mono text-xs uppercase tracking-widest bg-[#2c2c2e] text-[#5e5ce6] rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-weight="fill">shield_lock</span>
+                    Policy Settings
+                </a>
+</nav>
+<div class="mt-auto space-y-4 pt-4">
+<a class="flex items-center gap-3 px-3 py-2.5 font-mono text-xs uppercase tracking-widest text-gray-400 hover:text-white hover:bg-[#2c2c2e] rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">analytics</span>
+                    System Health
+                </a>
+<button class="w-full py-3 bg-error-container text-error rounded-lg font-mono text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-opacity">
+                    Emergency Stop
+                </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 flex-1 overflow-y-auto bg-[#111111] p-8">
+<div class="max-w-5xl mx-auto space-y-8">
+<!-- Header HUD -->
+<div class="flex items-end justify-between border-b border-white/5 pb-6">
+<div>
+<h1 class="font-h1 text-h1 text-white mb-2">Guard Policy Configuration</h1>
+<p class="font-body-md text-on-surface-variant max-w-2xl">Manage autonomous agent permissions and security thresholds. All changes require cryptographic confirmation before deployment.</p>
+</div>
+<div class="text-right hidden lg:block">
+<p class="font-mono text-[10px] text-gray-500 uppercase tracking-[0.2em]">Deployment State</p>
+<p class="font-mono text-xs text-[#5e5ce6]">ACTIVE_SHIELD_V4.2</p>
+</div>
+</div>
+<!-- Bento Grid Layout for Policies -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Policy: External Data Transfers (Large Card) -->
+<div class="md:col-span-8 bg-[#1c1c1e] rounded-xl p-6 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-7xl">security_update_good</span>
+</div>
+<div class="relative z-10">
+<div class="flex items-start justify-between mb-6">
+<div>
+<h3 class="font-h2 text-h2 text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container">outbound</span>
+                                        External Data Transfers
+                                    </h3>
+<p class="text-[#cccccc] font-body-md mt-1">Control the movement of sensitive training data and model weights to external domains.</p>
+</div>
+<div class="flex bg-[#111111] rounded-lg p-1">
+<button class="px-4 py-1.5 rounded-md font-mono text-[10px] uppercase tracking-wider bg-error-container text-error">Block</button>
+<button class="px-4 py-1.5 rounded-md font-mono text-[10px] uppercase tracking-wider text-gray-500">Allow</button>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-[#2c2c2e]/50 rounded-lg">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-gray-400">language</span>
+<div>
+<p class="text-white font-label-md">Domain Whitelisting</p>
+<p class="text-[11px] text-gray-500">Only permit transfers to verified company endpoints.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-[#111111] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-4 bg-[#2c2c2e]/50 rounded-lg">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-gray-400">encrypted</span>
+<div>
+<p class="text-white font-label-md">Mandatory E2EE</p>
+<p class="text-[11px] text-gray-500">Force end-to-end encryption on all outbound packets.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-[#111111] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Policy: Sensitivity Thresholds (Medium Card) -->
+<div class="md:col-span-4 bg-[#1c1c1e] rounded-xl p-6 border-l-2 border-primary-container">
+<h3 class="font-h2 text-h2 text-white mb-4">Risk Logic</h3>
+<p class="text-[#cccccc] text-caption mb-6">Define the thresholds at which the system requires human intervention.</p>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between mb-2">
+<label class="font-mono text-[10px] text-gray-400 uppercase tracking-widest">Financial Action Limit</label>
+<span class="font-mono text-[10px] text-[#5e5ce6]">$5,000</span>
+</div>
+<input class="w-full h-1 bg-[#2c2c2e] rounded-lg appearance-none cursor-pointer accent-[#5e5ce6]" type="range"/>
+</div>
+<div>
+<div class="flex justify-between mb-2">
+<label class="font-mono text-[10px] text-gray-400 uppercase tracking-widest">Data Mutation Depth</label>
+<span class="font-mono text-[10px] text-[#5e5ce6]">Lvl 3</span>
+</div>
+<div class="grid grid-cols-5 gap-2">
+<div class="h-1 bg-primary-container rounded-full"></div>
+<div class="h-1 bg-primary-container rounded-full"></div>
+<div class="h-1 bg-primary-container rounded-full"></div>
+<div class="h-1 bg-[#2c2c2e] rounded-full"></div>
+<div class="h-1 bg-[#2c2c2e] rounded-full"></div>
+</div>
+</div>
+<div>
+<label class="font-mono text-[10px] text-gray-400 uppercase tracking-widest mb-2 block">Agent Autonomy Level</label>
+<select class="w-full bg-[#111111] border-none text-white font-body-md rounded-lg p-3 focus:ring-1 focus:ring-[#5e5ce6] outline-none">
+<option>Strict Supervision</option>
+<option>Standard Guardrails</option>
+<option>High Velocity (Internal Only)</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Policy Matrix (Bottom Wide Card) -->
+<div class="md:col-span-12 bg-[#1c1c1e] rounded-xl overflow-hidden">
+<div class="px-6 py-4 border-b border-white/5 bg-[#2c2c2e]/20 flex items-center justify-between">
+<h3 class="font-mono text-xs font-bold text-white uppercase tracking-widest">Action Permission Matrix</h3>
+<div class="flex gap-4">
+<span class="flex items-center gap-1 font-mono text-[10px] text-green-500 uppercase"><span class="w-2 h-2 rounded-full bg-green-500"></span> Allow</span>
+<span class="flex items-center gap-1 font-mono text-[10px] text-yellow-500 uppercase"><span class="w-2 h-2 rounded-full bg-yellow-500"></span> Ask</span>
+<span class="flex items-center gap-1 font-mono text-[10px] text-red-500 uppercase"><span class="w-2 h-2 rounded-full bg-red-500"></span> Deny</span>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left font-body-md">
+<thead>
+<tr class="text-gray-500 border-b border-white/5">
+<th class="px-6 py-4 font-label-md">System Action</th>
+<th class="px-6 py-4 font-label-md">Policy Status</th>
+<th class="px-6 py-4 font-label-md">Last Audit</th>
+<th class="px-6 py-4 font-label-md">Risk Score</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<tr class="hover:bg-[#2c2c2e]/30 transition-colors">
+<td class="px-6 py-4 text-white">Database Schema Modification</td>
+<td class="px-6 py-4">
+<div class="inline-flex bg-[#111111] rounded-lg p-0.5">
+<button class="px-3 py-1 rounded text-[10px] uppercase font-bold text-gray-500">Allow</button>
+<button class="px-3 py-1 rounded text-[10px] uppercase font-bold bg-yellow-500/20 text-yellow-500">Ask</button>
+<button class="px-3 py-1 rounded text-[10px] uppercase font-bold text-gray-500">Deny</button>
+</div>
+</td>
+<td class="px-6 py-4 font-mono text-xs text-gray-500">2023-10-24 14:02</td>
+<td class="px-6 py-4 font-mono text-xs text-red-400">HIGH</td>
+</tr>
+<tr class="hover:bg-[#2c2c2e]/30 transition-colors">
+<td class="px-6 py-4 text-white">Third-party API Integration</td>
+<td class="px-6 py-4">
+<div class="inline-flex bg-[#111111] rounded-lg p-0.5">
+<button class="px-3 py-1 rounded text-[10px] uppercase font-bold text-gray-500">Allow</button>
+<button class="px-3 py-1 rounded text-[10px] uppercase font-bold text-gray-500">Ask</button>
+<button class="px-3 py-1 rounded text-[10px] uppercase font-bold bg-red-500/20 text-red-500">Deny</button>
+</div>
+</td>
+<td class="px-6 py-4 font-mono text-xs text-gray-500">2023-10-25 09:15</td>
+<td class="px-6 py-4 font-mono text-xs text-orange-400">MED</td>
+</tr>
+<tr class="hover:bg-[#2c2c2e]/30 transition-colors">
+<td class="px-6 py-4 text-white">System Log Rotation</td>
+<td class="px-6 py-4">
+<div class="inline-flex bg-[#111111] rounded-lg p-0.5">
+<button class="px-3 py-1 rounded text-[10px] uppercase font-bold bg-green-500/20 text-green-500">Allow</button>
+<button class="px-3 py-1 rounded text-[10px] uppercase font-bold text-gray-500">Ask</button>
+<button class="px-3 py-1 rounded text-[10px] uppercase font-bold text-gray-500">Deny</button>
+</div>
+</td>
+<td class="px-6 py-4 font-mono text-xs text-gray-500">2023-10-25 11:30</td>
+<td class="px-6 py-4 font-mono text-xs text-green-400">LOW</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="bg-[#1c1c1e] rounded-xl p-4 flex items-center justify-between border-t-2 border-primary-container">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-yellow-500">info</span>
+<p class="text-caption text-[#cccccc]">Confirming changes will initiate a system-wide policy propagation. This action cannot be undone without manual rollback.</p>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2 bg-[#2c2c2e] text-white rounded-lg font-label-md hover:bg-[#3c3c3e] transition-colors">
+                            Cancel Changes
+                        </button>
+<button class="px-8 py-2 bg-[#5e5ce6] text-white rounded-lg font-label-md flex items-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-sm" data-weight="fill">verified_user</span>
+                            Commit &amp; Deploy Policy
+                        </button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Security Overlay Prompt (UX Guardrail) -->
+<div class="fixed inset-0 bg-black/80 z-[100] backdrop-blur-sm flex items-center justify-center p-6 hidden">
+<div class="bg-[#1c1c1e] w-full max-w-md rounded-xl border border-white/10 p-8 text-center">
+<div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+<span class="material-symbols-outlined text-red-500 text-3xl">lock_reset</span>
+</div>
+<h2 class="font-h2 text-h2 text-white mb-2">Authorization Required</h2>
+<p class="text-[#cccccc] font-body-md mb-8">You are attempting to modify a critical security policy. Please enter your administrator hardware key to proceed.</p>
+<div class="space-y-4">
+<div class="h-12 bg-[#111111] rounded-lg flex items-center justify-center border border-white/5">
+<span class="font-mono text-xs text-gray-500 tracking-widest">AWAITING_PHYSICAL_KEY...</span>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 py-3 bg-[#2c2c2e] text-white rounded-lg font-label-md">Abort</button>
+<button class="flex-1 py-3 bg-[#5e5ce6] text-white rounded-lg font-label-md">Manual Override</button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

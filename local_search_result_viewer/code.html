@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vian CommandOS - Local Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#5e5ce6",
+                    "secondary": "#c8c6c8",
+                    "on-surface-variant": "#c7c4d7",
+                    "error": "#ffb4ab",
+                    "on-tertiary": "#502400",
+                    "inverse-surface": "#e4e1ed",
+                    "on-primary": "#1800a7",
+                    "secondary-container": "#474649",
+                    "surface": "#13131b",
+                    "surface-tint": "#c2c1ff",
+                    "primary-fixed": "#e2dfff",
+                    "on-error": "#690005",
+                    "on-primary-fixed-variant": "#332dbc",
+                    "on-primary-fixed": "#0c006b",
+                    "primary": "#c2c1ff",
+                    "primary-fixed-dim": "#c2c1ff",
+                    "on-secondary": "#303032",
+                    "secondary-fixed-dim": "#c8c6c8",
+                    "inverse-on-surface": "#302f38",
+                    "surface-container-lowest": "#0e0d15",
+                    "on-tertiary-fixed-variant": "#723600",
+                    "tertiary-container": "#ae5600",
+                    "surface-container-low": "#1b1b23",
+                    "on-tertiary-container": "#ffefe7",
+                    "on-secondary-fixed-variant": "#474649",
+                    "inverse-primary": "#4d4ad5",
+                    "on-primary-container": "#f4f1ff",
+                    "outline": "#918fa0",
+                    "on-surface": "#e4e1ed",
+                    "on-secondary-container": "#b6b4b7",
+                    "on-tertiary-fixed": "#311300",
+                    "secondary-fixed": "#e4e2e4",
+                    "on-secondary-fixed": "#1b1b1d",
+                    "surface-bright": "#393841",
+                    "tertiary-fixed-dim": "#ffb786",
+                    "surface-container-highest": "#34343d",
+                    "on-background": "#e4e1ed",
+                    "surface-container-high": "#2a2932",
+                    "surface-variant": "#34343d",
+                    "on-error-container": "#ffdad6",
+                    "tertiary": "#ffb786",
+                    "surface-dim": "#13131b",
+                    "outline-variant": "#464554",
+                    "surface-container": "#1f1f27",
+                    "tertiary-fixed": "#ffdcc6",
+                    "error-container": "#93000a",
+                    "background": "#13131b"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "3xl": "64px",
+                    "xl": "32px",
+                    "2xl": "48px",
+                    "sm": "8px",
+                    "gutter": "16px",
+                    "md": "16px",
+                    "xs": "4px",
+                    "lg": "24px",
+                    "container-margin": "24px"
+            },
+            "fontFamily": {
+                    "h1": ["SF Pro Display", "sans-serif"],
+                    "label-md": ["Manrope", "sans-serif"],
+                    "display-lg": ["SF Pro Display", "sans-serif"],
+                    "body-md": ["Manrope", "sans-serif"],
+                    "h2": ["SF Pro Display", "sans-serif"],
+                    "body-lg": ["Manrope", "sans-serif"],
+                    "caption": ["Manrope", "sans-serif"]
+            },
+            "fontSize": {
+                    "h1": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "h2": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "caption": ["12px", {"lineHeight": "1.4", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #111111; color: #e4e1ed; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .hud-scanline { background: linear-gradient(to bottom, transparent 50%, rgba(94, 92, 230, 0.03) 50%); background-size: 100% 4px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #2c2c2e; border-radius: 10px; }
+    </style>
+</head>
+<body class="font-body-md antialiased selection:bg-primary-container selection:text-white">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-14 bg-[#1c1c1e] border-b border-transparent">
+<div class="flex items-center gap-8">
+<span class="text-lg font-black tracking-widest text-white uppercase">Vian CommandOS</span>
+<div class="hidden md:flex items-center gap-6">
+<a class="font-mono text-xs tracking-tighter text-gray-500 hover:text-gray-300 transition-colors" href="#">HUD</a>
+<a class="font-mono text-xs tracking-tighter text-[#5e5ce6] border-b border-[#5e5ce6] pb-1" href="#">Audit Ledger</a>
+<a class="font-mono text-xs tracking-tighter text-gray-500 hover:text-gray-300 transition-colors" href="#">Undo Journal</a>
+<a class="font-mono text-xs tracking-tighter text-gray-500 hover:text-gray-300 transition-colors" href="#">Policy</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-[#2c2c2e] transition-all rounded-lg scale-95 active:opacity-80">
+<span class="material-symbols-outlined text-[#5e5ce6]">security</span>
+</button>
+<button class="p-2 hover:bg-[#2c2c2e] transition-all rounded-lg scale-95 active:opacity-80">
+<span class="material-symbols-outlined text-[#5e5ce6]">monitor_heart</span>
+</button>
+<button class="p-2 hover:bg-[#2c2c2e] transition-all rounded-lg scale-95 active:opacity-80">
+<span class="material-symbols-outlined text-[#5e5ce6]">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden ml-2 bg-[#2c2c2e]">
+<img alt="User profile" data-alt="A professional headshot of a high-tech system administrator in a dark, neon-lit server room environment. The lighting is dramatic, with cold blue and deep purple hues casting sharp shadows. The individual has a focused, calm expression, embodying the 'calm control' aesthetic of the CommandOS interface. High-key metallic textures and digital lens flares enhance the futuristic, premium atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHU2BsGws8hHnIUAzES7UfuwbMfFT6IVdPkGkOOjnmcZJG186nHoZVw4U9dMLo7BTyCGOwSxX-X0ZQOaQmANJQOsPQGPyMNsuK-MpmARSp-7KB6IVlbFSlr13qvRUwhUbPhmxGBoiK1IhXKqZyn8CTbBlJJXvWslzUrzdcjJm5h_J_upqmzToEXa0jmiZeQnFrloln0cvi2dl2pCWcwdgXN7714hBW0OVm0OOlJdB9QCsnCO1nCmkun1fpaTADF5YNCsSth9npJmTu"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-14 h-[calc(100vh-3.5rem)] flex flex-col p-4 bg-[#1c1c1e] w-64 border-r border-transparent">
+<div class="flex items-center gap-3 px-2 mb-8">
+<div class="w-10 h-10 rounded-lg bg-[#2c2c2e] flex items-center justify-center">
+<span class="material-symbols-outlined text-[#5e5ce6]">psychology</span>
+</div>
+<div>
+<h3 class="font-mono text-xs uppercase tracking-widest text-white font-bold">Genius Brain</h3>
+<p class="font-mono text-[10px] text-gray-500">Nursery V2.0</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 bg-[#2c2c2e] text-[#5e5ce6] rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-mono text-xs uppercase tracking-widest">Audit Ledger</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-gray-400 hover:text-white hover:bg-[#2c2c2e] transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">settings_backup_restore</span>
+<span class="font-mono text-xs uppercase tracking-widest">Undo Journal</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-gray-400 hover:text-white hover:bg-[#2c2c2e] transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">shield_lock</span>
+<span class="font-mono text-xs uppercase tracking-widest">Policy Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-4 space-y-4">
+<a class="flex items-center gap-3 px-3 py-2.5 text-gray-400 hover:text-white hover:bg-[#2c2c2e] transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-mono text-xs uppercase tracking-widest">System Health</span>
+</a>
+<button class="w-full py-3 bg-error-container text-error rounded-lg font-mono text-xs uppercase tracking-widest hover:brightness-110 transition-all active:scale-95">
+                Emergency Stop
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 mt-14 p-lg min-h-screen hud-scanline">
+<div class="max-w-5xl mx-auto space-y-lg">
+<!-- Header Section -->
+<header class="flex flex-col gap-sm">
+<div class="flex items-center gap-2 text-primary uppercase font-mono text-[10px] tracking-[0.2em]">
+<span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+                    Local Environment Index / Search Mode
+                </div>
+<h1 class="font-h1 text-h1 text-on-surface">Local Intelligence Engine</h1>
+</header>
+<!-- Search Interface Container -->
+<section class="bg-[#1c1c1e] rounded-xl overflow-hidden flex flex-col h-[768px] border border-transparent shadow-2xl">
+<!-- Search Input Area -->
+<div class="p-lg bg-[#1c1c1e] z-10">
+<div class="relative group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">search</span>
+</div>
+<input class="w-full bg-[#252528] border-none rounded-lg py-4 pl-12 pr-4 text-on-surface placeholder:text-gray-600 focus:ring-1 focus:ring-primary-container focus:bg-[#2c2c2e] transition-all font-body-md" placeholder="Query local repositories, logs, or system nodes..." type="text"/>
+<div class="absolute inset-y-0 right-4 flex items-center gap-2">
+<span class="px-2 py-1 bg-[#1c1c1e] text-gray-500 text-[10px] font-mono rounded border border-gray-800">⌘ K</span>
+</div>
+</div>
+<div class="flex gap-4 mt-4">
+<button class="px-3 py-1 bg-[#2c2c2e] text-[#5e5ce6] text-caption font-mono uppercase tracking-widest rounded-lg flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-[#5e5ce6] rounded-full"></span> All Nodes
+                        </button>
+<button class="px-3 py-1 hover:bg-[#2c2c2e] text-gray-500 text-caption font-mono uppercase tracking-widest rounded-lg transition-colors">
+                            Logs
+                        </button>
+<button class="px-3 py-1 hover:bg-[#2c2c2e] text-gray-500 text-caption font-mono uppercase tracking-widest rounded-lg transition-colors">
+                            Assets
+                        </button>
+<button class="px-3 py-1 hover:bg-[#2c2c2e] text-gray-500 text-caption font-mono uppercase tracking-widest rounded-lg transition-colors">
+                            Policies
+                        </button>
+</div>
+</div>
+<!-- Results Scroll Area -->
+<div class="flex-1 overflow-y-auto custom-scrollbar px-lg pb-lg space-y-4">
+<!-- Result Item 1 -->
+<div class="group p-lg bg-surface-container-low rounded-xl hover:bg-[#2c2c2e] transition-all cursor-pointer border border-transparent hover:border-[#5e5ce6]/20">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-[#252528] flex items-center justify-center group-hover:bg-[#1c1c1e] transition-colors">
+<span class="material-symbols-outlined text-[#5e5ce6]">terminal</span>
+</div>
+<div>
+<h3 class="font-h2 text-body-lg text-[#e5e2e1] group-hover:text-primary transition-colors">System.Core.Kernel_Logs</h3>
+<span class="text-caption text-primary uppercase tracking-widest opacity-70">SYSLOG_FILE</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-1.5 hover:bg-[#1c1c1e] rounded text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+<button class="p-1.5 hover:bg-[#1c1c1e] rounded text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+<p class="text-body-md text-[#cccccc] line-clamp-2 ml-[52px]">
+                            Comprehensive execution logs for the primary Vian kernel. Contains thread allocation data, memory management cycles, and high-priority interrupt signals from the hardware abstraction layer.
+                        </p>
+<div class="mt-4 ml-[52px] flex items-center gap-6 text-[10px] font-mono text-gray-500 uppercase tracking-tighter">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">schedule</span> 2ms ago</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">storage</span> 4.2 GB</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">verified_user</span> Integrity: 99%</span>
+</div>
+</div>
+<!-- Result Item 2 -->
+<div class="group p-lg bg-surface-container-low rounded-xl hover:bg-[#2c2c2e] transition-all cursor-pointer border border-transparent hover:border-[#5e5ce6]/20">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-[#252528] flex items-center justify-center group-hover:bg-[#1c1c1e] transition-colors">
+<span class="material-symbols-outlined text-[#5e5ce6]">account_tree</span>
+</div>
+<div>
+<h3 class="font-h2 text-body-lg text-[#e5e2e1] group-hover:text-primary transition-colors">Neural_Path_Mapping_V2</h3>
+<span class="text-caption text-primary uppercase tracking-widest opacity-70">JSON_SCHEMA</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-1.5 hover:bg-[#1c1c1e] rounded text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+<button class="p-1.5 hover:bg-[#1c1c1e] rounded text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+<p class="text-body-md text-[#cccccc] line-clamp-2 ml-[52px]">
+                            Configuration schema for the Genius Brain's synaptic weight distribution. Defines routing priorities for localized inference engines across the nursery cluster.
+                        </p>
+<div class="mt-4 ml-[52px] flex items-center gap-6 text-[10px] font-mono text-gray-500 uppercase tracking-tighter">
+<span class="flex items-center gap-1 text-primary-container"><span class="material-symbols-outlined text-[12px]">star</span> Featured Path</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">cloud_done</span> Local Sync</span>
+</div>
+</div>
+<!-- Result Item 3 -->
+<div class="group p-lg bg-surface-container-low rounded-xl hover:bg-[#2c2c2e] transition-all cursor-pointer border border-transparent hover:border-[#5e5ce6]/20">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-[#252528] flex items-center justify-center group-hover:bg-[#1c1c1e] transition-colors">
+<span class="material-symbols-outlined text-[#5e5ce6]">shield</span>
+</div>
+<div>
+<h3 class="font-h2 text-body-lg text-[#e5e2e1] group-hover:text-primary transition-colors">Audit_Policy_Override</h3>
+<span class="text-caption text-primary uppercase tracking-widest opacity-70">POLICY_DOC</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-1.5 hover:bg-[#1c1c1e] rounded text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+<button class="p-1.5 hover:bg-[#1c1c1e] rounded text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+<p class="text-body-md text-[#cccccc] line-clamp-2 ml-[52px]">
+                            Security overrides for manual ledger intervention. This document outlines the protocols required to initiate an Undo Journal action during system anomalies.
+                        </p>
+<div class="mt-4 ml-[52px] flex items-center gap-6 text-[10px] font-mono text-gray-500 uppercase tracking-tighter">
+<span class="flex items-center gap-1 text-error"><span class="material-symbols-outlined text-[12px]">warning</span> High Authority Required</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">history</span> Last edited: 4h</span>
+</div>
+</div>
+<!-- Result Item 4 (Visual Density Check) -->
+<div class="group p-lg bg-surface-container-low rounded-xl hover:bg-[#2c2c2e] transition-all cursor-pointer border border-transparent hover:border-[#5e5ce6]/20">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-[#252528] flex items-center justify-center group-hover:bg-[#1c1c1e] transition-colors">
+<span class="material-symbols-outlined text-[#5e5ce6]">monitoring</span>
+</div>
+<div>
+<h3 class="font-h2 text-body-lg text-[#e5e2e1] group-hover:text-primary transition-colors">Environmental_Telemetry_Report</h3>
+<span class="text-caption text-primary uppercase tracking-widest opacity-70">METRIC_STREAM</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-1.5 hover:bg-[#1c1c1e] rounded text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+<button class="p-1.5 hover:bg-[#1c1c1e] rounded text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+<p class="text-body-md text-[#cccccc] line-clamp-2 ml-[52px]">
+                            Real-time telemetry from nursery environmental sensors. Tracking thermal distribution, humidity levels, and power consumption across Level 1 and Level 2 clusters.
+                        </p>
+<div class="mt-4 ml-[52px] grid grid-cols-2 gap-4">
+<div class="h-1 bg-[#1c1c1e] rounded-full overflow-hidden">
+<div class="w-2/3 h-full bg-primary shadow-[0_0_8px_rgba(94,92,230,0.5)]"></div>
+</div>
+<span class="text-[10px] font-mono text-gray-500 uppercase">Stream Integrity: 67%</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom Stats / Quick Preview -->
+<footer class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<div class="bg-[#1c1c1e] p-lg rounded-xl flex items-center gap-4">
+<div class="p-3 bg-[#2c2c2e] rounded-lg">
+<span class="material-symbols-outlined text-[#5e5ce6]">database</span>
+</div>
+<div>
+<p class="text-caption text-gray-500 uppercase tracking-widest">Indexed Items</p>
+<h4 class="text-h2 font-mono text-white">2,481,092</h4>
+</div>
+</div>
+<div class="bg-[#1c1c1e] p-lg rounded-xl flex items-center gap-4">
+<div class="p-3 bg-[#2c2c2e] rounded-lg">
+<span class="material-symbols-outlined text-[#5e5ce6]">bolt</span>
+</div>
+<div>
+<p class="text-caption text-gray-500 uppercase tracking-widest">Query Speed</p>
+<h4 class="text-h2 font-mono text-white">0.0004s</h4>
+</div>
+</div>
+<div class="bg-[#1c1c1e] p-lg rounded-xl flex items-center gap-4">
+<div class="p-3 bg-[#2c2c2e] rounded-lg">
+<span class="material-symbols-outlined text-[#5e5ce6]">update</span>
+</div>
+<div>
+<p class="text-caption text-gray-500 uppercase tracking-widest">Cache Status</p>
+<h4 class="text-h2 font-mono text-white">Optimal</h4>
+</div>
+</div>
+</footer>
+</div>
+</main>
+</body></html>

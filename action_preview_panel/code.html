@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#5e5ce6",
+                    "secondary": "#c8c6c8",
+                    "on-surface-variant": "#c7c4d7",
+                    "error": "#ffb4ab",
+                    "on-tertiary": "#502400",
+                    "inverse-surface": "#e4e1ed",
+                    "on-primary": "#1800a7",
+                    "secondary-container": "#474649",
+                    "surface": "#13131b",
+                    "surface-tint": "#c2c1ff",
+                    "primary-fixed": "#e2dfff",
+                    "on-error": "#690005",
+                    "on-primary-fixed-variant": "#332dbc",
+                    "on-primary-fixed": "#0c006b",
+                    "primary": "#c2c1ff",
+                    "primary-fixed-dim": "#c2c1ff",
+                    "on-secondary": "#303032",
+                    "secondary-fixed-dim": "#c8c6c8",
+                    "inverse-on-surface": "#302f38",
+                    "surface-container-lowest": "#0e0d15",
+                    "on-tertiary-fixed-variant": "#723600",
+                    "tertiary-container": "#ae5600",
+                    "surface-container-low": "#1b1b23",
+                    "on-tertiary-container": "#ffefe7",
+                    "on-secondary-fixed-variant": "#474649",
+                    "inverse-primary": "#4d4ad5",
+                    "on-primary-container": "#f4f1ff",
+                    "outline": "#918fa0",
+                    "on-surface": "#e4e1ed",
+                    "on-secondary-container": "#b6b4b7",
+                    "on-tertiary-fixed": "#311300",
+                    "secondary-fixed": "#e4e2e4",
+                    "on-secondary-fixed": "#1b1b1d",
+                    "surface-bright": "#393841",
+                    "tertiary-fixed-dim": "#ffb786",
+                    "surface-container-highest": "#34343d",
+                    "on-background": "#e4e1ed",
+                    "surface-container-high": "#2a2932",
+                    "surface-variant": "#34343d",
+                    "on-error-container": "#ffdad6",
+                    "tertiary": "#ffb786",
+                    "surface-dim": "#13131b",
+                    "outline-variant": "#464554",
+                    "surface-container": "#1f1f27",
+                    "tertiary-fixed": "#ffdcc6",
+                    "error-container": "#93000a",
+                    "background": "#13131b"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "3xl": "64px",
+                    "xl": "32px",
+                    "2xl": "48px",
+                    "sm": "8px",
+                    "gutter": "16px",
+                    "md": "16px",
+                    "xs": "4px",
+                    "lg": "24px",
+                    "container-margin": "24px"
+            },
+            "fontFamily": {
+                    "h1": ["SF Pro Display", "sans-serif"],
+                    "label-md": ["manrope", "sans-serif"],
+                    "display-lg": ["SF Pro Display", "sans-serif"],
+                    "body-md": ["manrope", "sans-serif"],
+                    "h2": ["SF Pro Display", "sans-serif"],
+                    "body-lg": ["manrope", "sans-serif"],
+                    "caption": ["manrope", "sans-serif"]
+            },
+            "fontSize": {
+                    "h1": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "h2": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "caption": ["12px", {"lineHeight": "1.4", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #111111;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface bg-[#111111] min-h-screen">
+<!-- TopNavBar Shell -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-14 bg-[#1c1c1e] border-b border-transparent">
+<div class="flex items-center gap-6">
+<span class="text-lg font-black tracking-widest text-white uppercase">Vian CommandOS</span>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="font-mono text-xs tracking-tighter text-gray-500 hover:text-gray-300 transition-colors" href="#">HUD</a>
+<a class="font-mono text-xs tracking-tighter text-[#5e5ce6] border-b border-[#5e5ce6] pb-1" href="#">Audit Ledger</a>
+<a class="font-mono text-xs tracking-tighter text-gray-500 hover:text-gray-300 transition-colors" href="#">Undo Journal</a>
+<a class="font-mono text-xs tracking-tighter text-gray-500 hover:text-gray-300 transition-colors" href="#">Policy</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-gray-400 hover:text-white transition-colors cursor-pointer">security</span>
+<span class="material-symbols-outlined text-gray-400 hover:text-white transition-colors cursor-pointer">monitor_heart</span>
+<span class="material-symbols-outlined text-gray-400 hover:text-white transition-colors cursor-pointer">settings</span>
+<div class="w-8 h-8 rounded-full bg-surface-container overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A professional headshot of a software engineer in a dark tech-focused environment. The lighting is moody with purple and blue rim lights, reflecting the Vian CommandOS aesthetic. The subject is calm and focused, wearing a modern dark technical jacket. The background is a blurred server room with glowing blue status lights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf38Fmzr1aA3Fjys9OL6xThvN7RDbU3xf_hG7Kt5hWd2ZHW-juQYcGVqge0yBCa4yzv0O1E1O3HUZ26bSEbR4x2gspFuoBoVoJ_PDTSLusa_-dwOR7wBWKWPDiOxuouncaTj8sa-TdA3lBE5Ecsd5JN0Jh3qiMZ62XzKXT5KW6kngvOy0jmBcv-WhLDzBoeZIDKS-c9WstkemagaXkP-kTNpmGxz9xlAL5cnFm-C3kqCLmnIzH4l6MyGiE8Mamm9r0_ZYO6XFXSeSK"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-14 h-[calc(100vh-3.5rem)] flex flex-col p-4 bg-[#1c1c1e] w-64">
+<div class="mb-8 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-weight="fill" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+<div>
+<h3 class="text-white font-bold text-xs uppercase tracking-widest">Genius Brain</h3>
+<p class="text-[10px] text-gray-500 font-mono">Nursery V2.0</p>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<div class="flex items-center gap-3 p-3 bg-[#2c2c2e] text-[#5e5ce6] rounded-lg cursor-pointer">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-mono text-xs uppercase tracking-widest">Audit Ledger</span>
+</div>
+<div class="flex items-center gap-3 p-3 text-gray-400 hover:text-white hover:bg-[#2c2c2e] rounded-lg transition-colors cursor-pointer">
+<span class="material-symbols-outlined">settings_backup_restore</span>
+<span class="font-mono text-xs uppercase tracking-widest">Undo Journal</span>
+</div>
+<div class="flex items-center gap-3 p-3 text-gray-400 hover:text-white hover:bg-[#2c2c2e] rounded-lg transition-colors cursor-pointer">
+<span class="material-symbols-outlined">shield_lock</span>
+<span class="font-mono text-xs uppercase tracking-widest">Policy Settings</span>
+</div>
+</nav>
+<div class="mt-auto space-y-4">
+<div class="flex items-center gap-3 p-3 text-gray-400 hover:text-white hover:bg-[#2c2c2e] rounded-lg transition-colors cursor-pointer">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-mono text-xs uppercase tracking-widest">System Health</span>
+</div>
+<button class="w-full py-3 bg-error-container text-error font-mono text-xs uppercase tracking-widest rounded-lg scale-95 active:opacity-80 transition-transform">
+                Emergency Stop
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 mt-14 p-lg min-h-[calc(100vh-3.5rem)] relative bg-[#111111] flex items-center justify-center">
+<!-- Background Dimming Overlay -->
+<div class="absolute inset-0 bg-black/60 z-0 backdrop-blur-sm"></div>
+<!-- Approval Panel Card -->
+<div class="relative z-10 w-full max-w-4xl bg-[#1c1c1e] rounded-xl shadow-2xl overflow-hidden border border-[#2c2c2e]/50">
+<!-- HUD Header Decoration -->
+<div class="h-1 w-full bg-gradient-to-r from-transparent via-[#5e5ce6] to-transparent opacity-50"></div>
+<div class="p-xl">
+<!-- Header Info -->
+<div class="flex justify-between items-start mb-lg">
+<div class="space-y-1">
+<div class="flex items-center gap-2 mb-xs">
+<span class="bg-[#5e5ce6]/20 text-[#5e5ce6] px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-widest">Pending Review</span>
+<span class="text-gray-500 font-mono text-[10px]">ID: PR-X8842-VIAN</span>
+</div>
+<h1 class="font-h1 text-h1 text-white">Action Plan Review</h1>
+<p class="text-secondary font-body-md max-w-xl">System-initiated modification request detected for critical production infrastructure. Human approval required to commit changes.</p>
+</div>
+<div class="flex flex-col items-end gap-2">
+<div class="flex items-center gap-2 bg-[#ffb4ab]/10 border border-[#ffb4ab]/20 px-4 py-2 rounded-lg">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">warning</span>
+<span class="text-error font-mono text-xs uppercase font-bold tracking-widest">Critical Risk</span>
+</div>
+<span class="text-gray-500 font-mono text-[10px]">ETA Execution: 00:04:59</span>
+</div>
+</div>
+<!-- Content Grid (Bento Style) -->
+<div class="grid grid-cols-12 gap-lg">
+<!-- Primary Description & Target -->
+<div class="col-span-8 space-y-lg">
+<section class="bg-[#2c2c2e] p-lg rounded-xl border border-white/5">
+<h3 class="text-gray-400 font-mono text-xs uppercase tracking-widest mb-md">Proposed Action</h3>
+<p class="text-[#e5e2e1] font-body-lg leading-relaxed">
+                                Refactor the primary routing load balancer configuration to implement dynamic traffic shaping and latency-based failover across regional clusters.
+                            </p>
+<div class="mt-md flex items-center gap-2 p-md bg-[#1c1c1e] rounded-lg border border-[#5e5ce6]/20">
+<span class="material-symbols-outlined text-[#5e5ce6]">link</span>
+<span class="text-[#5e5ce6] font-mono text-xs">/etc/vian/core/lb-config.yaml</span>
+</div>
+</section>
+<!-- Execution Steps -->
+<section class="bg-[#2c2c2e] p-lg rounded-xl border border-white/5">
+<h3 class="text-gray-400 font-mono text-xs uppercase tracking-widest mb-md">Execution Breakdown</h3>
+<div class="space-y-4">
+<div class="flex gap-4 items-start">
+<div class="w-6 h-6 rounded-full bg-[#1c1c1e] flex items-center justify-center text-[10px] font-mono border border-[#5e5ce6]">01</div>
+<div>
+<p class="text-on-surface font-body-md font-semibold">Snapshot Configuration</p>
+<p class="text-gray-500 text-caption">Create immutable backup of existing routing tables to Ledger.</p>
+</div>
+</div>
+<div class="flex gap-4 items-start">
+<div class="w-6 h-6 rounded-full bg-[#1c1c1e] flex items-center justify-center text-[10px] font-mono border border-[#5e5ce6]">02</div>
+<div>
+<p class="text-on-surface font-body-md font-semibold">Validation Pass</p>
+<p class="text-gray-500 text-caption">Run dry-run synthetics to verify YAML integrity and dependency mapping.</p>
+</div>
+</div>
+<div class="flex gap-4 items-start">
+<div class="w-6 h-6 rounded-full bg-[#1c1c1e] flex items-center justify-center text-[10px] font-mono border border-gray-700">03</div>
+<div>
+<p class="text-on-surface font-body-md font-semibold">Atomic Swap</p>
+<p class="text-gray-500 text-caption">Restart load-balancer service with zero-downtime rolling update.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Sidebar Info / Diff Visual -->
+<div class="col-span-4 space-y-lg">
+<div class="bg-[#1c1c1e] border border-[#2c2c2e] rounded-xl overflow-hidden">
+<div class="p-md bg-[#2c2c2e] flex justify-between items-center">
+<span class="text-white font-mono text-[10px] uppercase tracking-widest">Configuration Diff</span>
+<span class="text-[#5e5ce6] text-[10px] font-mono">+12 -4</span>
+</div>
+<div class="p-md font-mono text-[10px] leading-tight space-y-1">
+<div class="text-error bg-error/5">- timeout: 30s</div>
+<div class="text-primary-container bg-primary-container/5">+ timeout: 15s</div>
+<div class="text-primary-container bg-primary-container/5">+ strategy: "latency_optimized"</div>
+<div class="text-primary-container bg-primary-container/5">+ health_check_freq: 500ms</div>
+<div class="text-gray-600">... 8 lines hidden</div>
+</div>
+</div>
+<div class="bg-[#1c1c1e] border border-error/20 p-md rounded-xl">
+<h4 class="text-error font-mono text-[10px] uppercase tracking-widest mb-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">bolt</span> Safety Warning
+                            </h4>
+<p class="text-gray-400 text-caption">This action modifies global traffic routing. Incorrect configuration may result in isolation of the APAC regional cluster.</p>
+</div>
+<div class="p-lg rounded-xl overflow-hidden relative group">
+<img alt="Data Center Visualization" class="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-50 transition-opacity" data-alt="A macro shot of illuminated fiber optic cables and server components in a dark data center environment. Glowing purple and neon blue light trails suggest high-speed data transfer. The focus is sharp on the technical textures of the hardware, creating a high-tech, utilitarian feel consistent with a CommandOS interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC71WhrntkgFZC-Qb2VDPcIU6xEmiO4PvHOfL1h5gz32OrsMpu8H0rzAhih6sjSPErS3eN7BlUJ0FFbNuCIaX8jHLUnOcKZfj1BKZbKrrvcPx9WW2C0VS2Ug1w0gsstZM_6Zwi6FPYItbIoqqSX0UsXLmC88zs3ubzuACbVd-jocv79rjEog40wbERca-60DLLe9HUhjmbJYfIb_YopVSj0QcZ9-2opjvVIBbFAlBxptBOgxCxi0R4SJIxPArlVSB_FRpm82SmIXDI9"/>
+<div class="relative z-10">
+<h4 class="text-white font-h2 text-sm">System Context</h4>
+<p class="text-gray-400 text-caption mt-1">Impacts 4 sub-systems and 12,402 active user sessions.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="mt-2xl flex items-center justify-between pt-lg border-t border-[#2c2c2e]">
+<div class="flex items-center gap-2">
+<div class="flex -space-x-2">
+<img alt="Reviewer" class="w-6 h-6 rounded-full border border-[#1c1c1e]" data-alt="Close up of a professional male face, slightly lit by screen glow, looking determined and analytical. The aesthetic is dark and tech-focused." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbQosYo28Uhl283p5HNZ7QNP1IRVsZE61g5ZSmuLxhsl-4m_eP1HLMqtsnsm87emIiQvoWwav_qUtYdwJdKm3jWZS7dkHYJ8Zyw-zgpZZHmYLOh4ez9jtXosd4MEfgEl1aGPNfOCls8w3fyhNMqm1FsByHeGrTnzfebtWjGu-fdkKll63aT41SS3l1neX_ZInm7gB6fD5xvki8wsPrQoKPjqGmIn8Qbt0zKo1aNLE5KTgL0RyD_RGsOy3RiST9zp8O2JmJaMtitOU1"/>
+<img alt="Reviewer" class="w-6 h-6 rounded-full border border-[#1c1c1e]" data-alt="Portrait of a female technical professional in profile, looking at a transparent digital interface. Moody violet and dark grey lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDo8PSRh6jKSWxiQPFapl45COU8k_TP7lQ8pjbThDolV-voklCa5owmUsct5_SvmhwWYkyGDsH4O-bOZZp2Vjp9B_NSOwjT24llB3FFlR4zgxfgaGpYt5V2hGCHTzmwfI24KIYG8JPidZAJhQY8SDDTIn4WulKvlQPbXNrRrFpE5QryRoSN64a5PL_nzPtAz9Q3kmkC7u_5CUFBYKB31ECmtKeByOWRF1qB2SL1CSrLH1gDluArtvnOqAZoW4snlldcUlktGJ7U-RtH"/>
+</div>
+<span class="text-gray-500 font-mono text-[10px]">2 Reviewers Notified</span>
+</div>
+<div class="flex items-center gap-md">
+<button class="px-8 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-surface-container-highest font-mono text-xs uppercase tracking-widest transition-all">
+                            Decline &amp; Terminate
+                        </button>
+<button class="bg-[#5e5ce6] hover:bg-[#4a48cc] text-white px-10 py-3 rounded-lg font-mono text-xs uppercase tracking-widest shadow-lg shadow-[#5e5ce6]/20 transition-all active:scale-95 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                            Approve and Execute
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB Suppression: FAB not rendered for this modal/transactional view as per instructions -->
+</body></html>

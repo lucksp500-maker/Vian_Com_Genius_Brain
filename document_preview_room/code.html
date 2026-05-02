@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vian CommandOS | Secure Document Preview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&amp;family=SF+Pro+Display:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#5e5ce6",
+                    "secondary": "#c8c6c8",
+                    "on-surface-variant": "#c7c4d7",
+                    "error": "#ffb4ab",
+                    "on-tertiary": "#502400",
+                    "inverse-surface": "#e4e1ed",
+                    "on-primary": "#1800a7",
+                    "secondary-container": "#474649",
+                    "surface": "#13131b",
+                    "surface-tint": "#c2c1ff",
+                    "primary-fixed": "#e2dfff",
+                    "on-error": "#690005",
+                    "on-primary-fixed-variant": "#332dbc",
+                    "on-primary-fixed": "#0c006b",
+                    "primary": "#c2c1ff",
+                    "primary-fixed-dim": "#c2c1ff",
+                    "on-secondary": "#303032",
+                    "secondary-fixed-dim": "#c8c6c8",
+                    "inverse-on-surface": "#302f38",
+                    "surface-container-lowest": "#0e0d15",
+                    "on-tertiary-fixed-variant": "#723600",
+                    "tertiary-container": "#ae5600",
+                    "surface-container-low": "#1b1b23",
+                    "on-tertiary-container": "#ffefe7",
+                    "on-secondary-fixed-variant": "#474649",
+                    "inverse-primary": "#4d4ad5",
+                    "on-primary-container": "#f4f1ff",
+                    "outline": "#918fa0",
+                    "on-surface": "#e4e1ed",
+                    "on-secondary-container": "#b6b4b7",
+                    "on-tertiary-fixed": "#311300",
+                    "secondary-fixed": "#e4e2e4",
+                    "on-secondary-fixed": "#1b1b1d",
+                    "surface-bright": "#393841",
+                    "tertiary-fixed-dim": "#ffb786",
+                    "surface-container-highest": "#34343d",
+                    "on-background": "#e4e1ed",
+                    "surface-container-high": "#2a2932",
+                    "surface-variant": "#34343d",
+                    "on-error-container": "#ffdad6",
+                    "tertiary": "#ffb786",
+                    "surface-dim": "#13131b",
+                    "outline-variant": "#464554",
+                    "surface-container": "#1f1f27",
+                    "tertiary-fixed": "#ffdcc6",
+                    "error-container": "#93000a",
+                    "background": "#13131b"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "3xl": "64px",
+                    "xl": "32px",
+                    "2xl": "48px",
+                    "sm": "8px",
+                    "gutter": "16px",
+                    "md": "16px",
+                    "xs": "4px",
+                    "lg": "24px",
+                    "container-margin": "24px"
+            },
+            "fontFamily": {
+                    "h1": ["SF Pro Display"],
+                    "label-md": ["Manrope"],
+                    "display-lg": ["SF Pro Display"],
+                    "body-md": ["Manrope"],
+                    "h2": ["SF Pro Display"],
+                    "body-lg": ["Manrope"],
+                    "caption": ["Manrope"]
+            },
+            "fontSize": {
+                    "h1": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "h2": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "caption": ["12px", {"lineHeight": "1.4", "fontWeight": "500"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hud-scanline {
+            background: linear-gradient(to bottom, transparent 50%, rgba(94, 92, 230, 0.03) 50%);
+            background-size: 100% 4px;
+        }
+        .mask-overlay {
+            background: repeating-linear-gradient(45deg, #1c1c1e, #1c1c1e 10px, #2c2c2e 10px, #2c2c2e 20px);
+        }
+        body {
+            background-color: #111111;
+            color: #e4e1ed;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-background selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation Shell -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-14 bg-[#1c1c1e] border-b border-transparent">
+<div class="flex items-center gap-4">
+<span class="text-lg font-black tracking-widest text-white uppercase font-h1">Vian CommandOS</span>
+<div class="h-4 w-[1px] bg-surface-container-highest mx-2"></div>
+<nav class="hidden md:flex gap-6 items-center h-full">
+<a class="font-mono text-xs tracking-tighter text-[#5e5ce6] border-b border-[#5e5ce6] pb-1" href="#">HUD</a>
+<a class="font-mono text-xs tracking-tighter text-gray-500 hover:text-gray-300 transition-colors" href="#">Audit Ledger</a>
+<a class="font-mono text-xs tracking-tighter text-gray-500 hover:text-gray-300 transition-colors" href="#">Undo Journal</a>
+<a class="font-mono text-xs tracking-tighter text-gray-500 hover:text-gray-300 transition-colors" href="#">Policy</a>
+</nav>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 hover:bg-[#2c2c2e] transition-all rounded-lg scale-95 active:opacity-80 transition-transform">
+<span class="material-symbols-outlined text-secondary" data-icon="security">security</span>
+</button>
+<button class="p-2 hover:bg-[#2c2c2e] transition-all rounded-lg scale-95 active:opacity-80 transition-transform">
+<span class="material-symbols-outlined text-secondary" data-icon="monitor_heart">monitor_heart</span>
+</button>
+<button class="p-2 hover:bg-[#2c2c2e] transition-all rounded-lg scale-95 active:opacity-80 transition-transform">
+<span class="material-symbols-outlined text-secondary" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden ml-2 ring-1 ring-primary-container/30">
+<img alt="User profile" data-alt="A professional close-up headshot of a person with a serene expression, set against a dark, moody background with subtle purple rim lighting. The lighting reflects a high-tech, futuristic CommandOS interface aesthetic, utilizing deep shadows and crisp focus. The overall atmosphere is sophisticated and calm, fitting a premium software environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKBlIzDqpSLALSA3jbMTEGfaTxMzj_3G1N7YFILB_OYHAk3dLAcWCALJItxoQblOT3NhmpxHwO4IxHngGm9RB6rGAsw4pPMou3b9YLkW5j9pipqoO3fYpoL3TdPXM19rkHs_OClzqOz8ZddjSDyUZQppT8Ddi-eo-5AXkA_1MDlUwzAHQZ2JQwBWFd04nsPyAnFjSJyNcB240YM8jq--NDQOu54n6XGFfoTbXtDW18Ivs74PBdWIjEUYg5IuutqgWsWqk_PwRhWnD2"/>
+</div>
+</div>
+</header>
+<!-- Side Navigation Shell -->
+<aside class="fixed left-0 top-14 h-[calc(100vh-3.5rem)] w-64 bg-[#1c1c1e] flex flex-col p-4 z-40 hidden md:flex">
+<div class="flex items-center gap-3 mb-8 px-2">
+<div class="w-10 h-10 bg-[#2c2c2e] rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-[#5e5ce6]" data-icon="neurology">neurology</span>
+</div>
+<div>
+<h3 class="font-mono text-xs uppercase tracking-widest text-white font-bold">Genius Brain</h3>
+<p class="font-mono text-[10px] text-gray-500 uppercase">Nursery V2.0</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 bg-[#2c2c2e] text-[#5e5ce6] rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+<span class="font-mono text-xs uppercase tracking-widest">Audit Ledger</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-gray-400 hover:text-white hover:bg-[#2c2c2e] rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings_backup_restore">settings_backup_restore</span>
+<span class="font-mono text-xs uppercase tracking-widest">Undo Journal</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-gray-400 hover:text-white hover:bg-[#2c2c2e] rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="shield_lock">shield_lock</span>
+<span class="font-mono text-xs uppercase tracking-widest">Policy Settings</span>
+</a>
+</nav>
+<div class="mt-auto space-y-4">
+<a class="flex items-center gap-3 px-3 py-2.5 text-gray-400 hover:text-white hover:bg-[#2c2c2e] rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-mono text-xs uppercase tracking-widest">System Health</span>
+</a>
+<button class="w-full py-3 bg-error-container text-error rounded-lg font-mono text-xs uppercase tracking-widest hover:opacity-90 transition-all">
+                Emergency Stop
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 mt-14 p-6 min-h-[calc(100vh-3.5rem)] relative">
+<!-- Secure Header -->
+<div class="flex justify-between items-end mb-8">
+<div class="space-y-1">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-sm" data-icon="verified_user">verified_user</span>
+<span class="font-mono text-[10px] uppercase tracking-[0.2em]">Secure Session Active</span>
+</div>
+<h1 class="font-h1 text-h1 text-on-surface">Intelligence_Briefing_v4.pdf</h1>
+<p class="font-body-md text-secondary text-caption">Confidential Source Analysis • Level 5 Clearance Required</p>
+</div>
+<div class="flex items-center gap-2">
+<div class="bg-surface-container px-4 py-2 rounded-lg flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="zoom_out">zoom_out</span>
+</button>
+<span class="font-mono text-xs text-secondary">100%</span>
+<button class="text-on-surface-variant hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="zoom_in">zoom_in</span>
+</button>
+</div>
+<button class="bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-label-md flex items-center gap-2 hover:opacity-90 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="print">print</span>
+                    Export Restricted
+                </button>
+</div>
+</div>
+<!-- Bento Grid Preview Layout -->
+<div class="grid grid-cols-12 gap-6 items-start">
+<!-- Metadata Panel -->
+<div class="col-span-12 lg:col-span-3 space-y-6">
+<div class="bg-[#1c1c1e] rounded-xl p-6 border-transparent">
+<h3 class="font-mono text-xs uppercase tracking-widest text-primary mb-4">Document Metadata</h3>
+<div class="space-y-4">
+<div class="space-y-1">
+<span class="text-caption text-gray-500 uppercase tracking-tighter">Owner</span>
+<p class="text-body-md text-[#cccccc]">Directorate of Operations</p>
+</div>
+<div class="space-y-1">
+<span class="text-caption text-gray-500 uppercase tracking-tighter">Created</span>
+<p class="text-body-md text-[#cccccc]">2024.05.12 14:02:55 Z</p>
+</div>
+<div class="space-y-1">
+<span class="text-caption text-gray-500 uppercase tracking-tighter">Integrity Hash</span>
+<p class="text-caption font-mono text-[#5e5ce6] break-all">SHA-256: 8f92...3a1e</p>
+</div>
+<div class="pt-4 border-t border-[#2c2c2e]">
+<div class="flex justify-between items-center mb-2">
+<span class="text-caption text-gray-500 uppercase">Retention</span>
+<span class="text-xs text-error font-mono">14h 22m</span>
+</div>
+<div class="w-full bg-[#2c2c2e] h-1 rounded-full overflow-hidden">
+<div class="bg-error w-3/4 h-full"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-[#1c1c1e] rounded-xl p-6 relative overflow-hidden">
+<div class="hud-scanline absolute inset-0 opacity-20 pointer-events-none"></div>
+<h3 class="font-mono text-xs uppercase tracking-widest text-primary mb-4">Access Logs</h3>
+<div class="space-y-3 relative z-10">
+<div class="flex items-start gap-3">
+<div class="w-1.5 h-1.5 rounded-full bg-primary mt-1.5"></div>
+<div class="text-caption text-[#cccccc]">
+<span class="text-white block">System Admin</span>
+                                Decrypted viewing session
+                            </div>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-1.5 h-1.5 rounded-full bg-gray-600 mt-1.5"></div>
+<div class="text-caption text-[#cccccc]">
+<span class="text-white block">Node 0x12</span>
+                                Routine integrity check passed
+                            </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Document Viewer -->
+<div class="col-span-12 lg:col-span-9">
+<div class="bg-[#1c1c1e] rounded-xl min-h-[800px] shadow-2xl relative flex flex-col">
+<!-- Page Header / Floating -->
+<div class="absolute top-4 right-4 bg-[#2c2c2e]/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/5 z-20">
+<span class="font-mono text-[10px] text-on-surface-variant">PAGE 01 / 12</span>
+</div>
+<!-- Secure Viewing Area Content -->
+<div class="p-12 md:p-20 flex-1 relative overflow-y-auto max-h-[800px] custom-scrollbar">
+<div class="max-w-3xl mx-auto space-y-8">
+<div class="space-y-6">
+<h2 class="font-h2 text-h2 text-white border-b border-[#2c2c2e] pb-4">Executive Summary: Quantum Vulnerabilities</h2>
+<p class="font-body-lg text-[#e5e2e1] leading-relaxed">
+                                    The following report outlines critical infrastructure points currently exposed to emerging cryptographic bypass methods. Initial findings indicate that traditional RSA encryption layers within the 
+                                    <span class="inline-block px-2 bg-[#888888]/20 text-[#888888] font-mono text-sm rounded mask-overlay border border-[#888888]/30 cursor-not-allowed" title="Sensitive Data Masked">REDACTED_SECTOR_7</span> 
+                                    are no longer sufficient to prevent lateral movement from sophisticated state actors.
+                                </p>
+<div class="bg-[#2c2c2e]/50 p-6 rounded-lg border border-[#5e5ce6]/20">
+<h4 class="font-mono text-xs uppercase text-primary mb-3">Priority Objectives</h4>
+<ul class="space-y-3 list-disc list-inside text-[#cccccc]">
+<li>Implement post-quantum resistant algorithms across all Edge nodes.</li>
+<li>Rotation of all static keys for <span class="inline-block px-2 bg-[#888888]/20 text-[#888888] font-mono text-sm rounded mask-overlay border border-[#888888]/30">SENSITIVE_ASSET_ID</span>.</li>
+<li>Hardened physical isolation for core neural relays.</li>
+</ul>
+</div>
+<p class="font-body-lg text-[#e5e2e1] leading-relaxed">
+                                    Logistics data confirms that the deployment of these countermeasures must occur before 
+                                    <span class="inline-block px-2 bg-[#888888]/20 text-[#888888] font-mono text-sm rounded mask-overlay border border-[#888888]/30">TIMESTAMP_REDACTED</span>. 
+                                    Failure to comply will result in an immediate quarantine of the affected subnet.
+                                </p>
+<div class="aspect-video w-full bg-[#111111] rounded-lg overflow-hidden relative group">
+<img alt="Infrastructure map with sensitive areas masked" data-alt="A detailed digital topographical map of a city infrastructure displayed on a dark high-tech monitor. The map features glowing cyan and deep purple lines representing network traffic. Large, heavy diagonal gray bars with 'REDACTED' text overlay sensitive government buildings and power grid nodes. The lighting is low and cinematic, emphasizing the security and secrecy of the interface within the CommandOS system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-OhDKRaakKDjYfGc7gPHfSrnxEIpBwAgxsa3B95hF_krQ2ZrvxuMxIGsRi_zFP4Gl4apC_WND352f3b5Sr5ptOwFPYDRpARVrpHKRZXgnMflWyGkvKPYwcGgzZ4N2iQVsv7sONwhEowDdzDVU37B20pUhFFMwDDqvnfxZ7ZM8xfL-mx2UKzbKkS6xxOnAwFGQGskiqwtmXHcOQ9CvODADcEPW2eD1Zbbdz0XSwUngwwft3zrBwt5X9WUhmDqJ_6Q5n4-ML_da9HCZ"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="text-white font-mono text-xs bg-[#5e5ce6] px-4 py-2 rounded-full">ENCRYPTED_VIEWPORT</span>
+</div>
+</div>
+<p class="font-body-lg text-[#e5e2e1] leading-relaxed italic border-l-2 border-primary pl-6">
+                                    "Security is not a final state but a continuous process of evolution against entropy." — CommandOS Doctrine
+                                </p>
+</div>
+</div>
+</div>
+<!-- Footer Controls -->
+<div class="h-16 bg-[#1c1c1e] border-t border-[#2c2c2e] flex items-center justify-between px-8 rounded-b-xl">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-[#2c2c2e] text-on-surface-variant transition-colors rounded-lg">
+<span class="material-symbols-outlined" data-icon="first_page">first_page</span>
+</button>
+<button class="p-2 hover:bg-[#2c2c2e] text-on-surface-variant transition-colors rounded-lg">
+<span class="material-symbols-outlined" data-icon="navigate_before">navigate_before</span>
+</button>
+<span class="font-mono text-xs text-secondary">01 <span class="text-gray-600">/</span> 12</span>
+<button class="p-2 hover:bg-[#2c2c2e] text-on-surface-variant transition-colors rounded-lg">
+<span class="material-symbols-outlined" data-icon="navigate_next">navigate_next</span>
+</button>
+<button class="p-2 hover:bg-[#2c2c2e] text-on-surface-variant transition-colors rounded-lg">
+<span class="material-symbols-outlined" data-icon="last_page">last_page</span>
+</button>
+</div>
+<div class="flex items-center gap-6">
+<label class="flex items-center gap-2 cursor-pointer group">
+<div class="w-8 h-4 bg-[#2c2c2e] rounded-full relative transition-colors group-hover:bg-[#3c3c3e]">
+<div class="absolute left-1 top-1 w-2 h-2 bg-primary rounded-full"></div>
+</div>
+<span class="font-mono text-[10px] uppercase text-gray-500 group-hover:text-white transition-colors">Show Redactions</span>
+</label>
+<button class="text-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="download_for_offline">download_for_offline</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

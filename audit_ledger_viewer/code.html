@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vian CommandOS | Audit Ledger</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#5e5ce6",
+                    "secondary": "#c8c6c8",
+                    "on-surface-variant": "#c7c4d7",
+                    "error": "#ffb4ab",
+                    "on-tertiary": "#502400",
+                    "inverse-surface": "#e4e1ed",
+                    "on-primary": "#1800a7",
+                    "secondary-container": "#474649",
+                    "surface": "#13131b",
+                    "surface-tint": "#c2c1ff",
+                    "primary-fixed": "#e2dfff",
+                    "on-error": "#690005",
+                    "on-primary-fixed-variant": "#332dbc",
+                    "on-primary-fixed": "#0c006b",
+                    "primary": "#c2c1ff",
+                    "primary-fixed-dim": "#c2c1ff",
+                    "on-secondary": "#303032",
+                    "secondary-fixed-dim": "#c8c6c8",
+                    "inverse-on-surface": "#302f38",
+                    "surface-container-lowest": "#0e0d15",
+                    "on-tertiary-fixed-variant": "#723600",
+                    "tertiary-container": "#ae5600",
+                    "surface-container-low": "#1b1b23",
+                    "on-tertiary-container": "#ffefe7",
+                    "on-secondary-fixed-variant": "#474649",
+                    "inverse-primary": "#4d4ad5",
+                    "on-primary-container": "#f4f1ff",
+                    "outline": "#918fa0",
+                    "on-surface": "#e4e1ed",
+                    "on-secondary-container": "#b6b4b7",
+                    "on-tertiary-fixed": "#311300",
+                    "secondary-fixed": "#e4e2e4",
+                    "on-secondary-fixed": "#1b1b1d",
+                    "surface-bright": "#393841",
+                    "tertiary-fixed-dim": "#ffb786",
+                    "surface-container-highest": "#34343d",
+                    "on-background": "#e4e1ed",
+                    "surface-container-high": "#2a2932",
+                    "surface-variant": "#34343d",
+                    "on-error-container": "#ffdad6",
+                    "tertiary": "#ffb786",
+                    "surface-dim": "#13131b",
+                    "outline-variant": "#464554",
+                    "surface-container": "#1f1f27",
+                    "tertiary-fixed": "#ffdcc6",
+                    "error-container": "#93000a",
+                    "background": "#111111"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "3xl": "64px",
+                    "xl": "32px",
+                    "2xl": "48px",
+                    "sm": "8px",
+                    "gutter": "16px",
+                    "md": "16px",
+                    "xs": "4px",
+                    "lg": "24px",
+                    "container-margin": "24px"
+            },
+            "fontFamily": {
+                    "h1": ["SF Pro Display", "sans-serif"],
+                    "label-md": ["Manrope", "sans-serif"],
+                    "display-lg": ["SF Pro Display", "sans-serif"],
+                    "body-md": ["Manrope", "sans-serif"],
+                    "h2": ["SF Pro Display", "sans-serif"],
+                    "body-lg": ["Manrope", "sans-serif"],
+                    "caption": ["Manrope", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { background-color: #111111; color: #e4e1ed; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #2c2c2e; border-radius: 10px; }
+        .scanline { background: linear-gradient(to bottom, transparent 50%, rgba(94, 92, 230, 0.05) 50.5%); background-size: 100% 4px; }
+    </style>
+</head>
+<body class="font-body-md bg-background overflow-hidden h-screen">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-14 bg-[#1c1c1e] border-b border-transparent">
+<div class="flex items-center gap-8">
+<span class="text-lg font-black tracking-widest text-white uppercase font-h1">Vian CommandOS</span>
+<nav class="hidden md:flex gap-6 items-center h-full">
+<a class="font-mono text-xs tracking-tighter text-gray-500 hover:text-gray-300 transition-colors uppercase" href="#">HUD</a>
+<a class="font-mono text-xs tracking-tighter text-[#5e5ce6] border-b border-[#5e5ce6] pb-1 uppercase" href="#">Audit Ledger</a>
+<a class="font-mono text-xs tracking-tighter text-gray-500 hover:text-gray-300 transition-colors uppercase" href="#">Undo Journal</a>
+<a class="font-mono text-xs tracking-tighter text-gray-500 hover:text-gray-300 transition-colors uppercase" href="#">Policy</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-[#2c2c2e] transition-all rounded-lg text-gray-400 scale-95 active:opacity-80">
+<span class="material-symbols-outlined">security</span>
+</button>
+<button class="p-2 hover:bg-[#2c2c2e] transition-all rounded-lg text-gray-400 scale-95 active:opacity-80">
+<span class="material-symbols-outlined">monitor_heart</span>
+</button>
+<button class="p-2 hover:bg-[#2c2c2e] transition-all rounded-lg text-gray-400 scale-95 active:opacity-80">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden ml-2 border border-outline-variant">
+<img alt="User profile" data-alt="A clean, professional headshot of a system administrator in high-key lighting, featuring a modern tech-noir aesthetic with subtle indigo rim lighting. The background is a soft-focus laboratory setting, maintaining a minimal and monochromatic color palette of deep blacks and slate grays, consistent with a high-end command center interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCamSg1xOL_-3nhWBh_rTk2tYKzCR3MeG4e6EJ4B15l1sW9mQWFYFiUlLZRi7xxH47kWBxwJdBLXyRJDuQ1PRtP0QPNBvMFG4Xn3MqeQrvsbpBaRjNTjrovUvilxwI2dE0jv9KIhKCc2_9a-ysRM_V3zyD8b-Wb19wzxSi6NkkPxx6COsDXkkvcyVF1aPKibQI4hDVqwGqc7btG5GyI4JR60AyY_txHKSflsXevdEJJf-9mQ1d4F8goNm_VbnNc6h2r89iBn9WSJ1q4"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-14 h-[calc(100vh-3.5rem)] flex flex-col p-4 bg-[#1c1c1e] w-64 z-40">
+<div class="flex items-center gap-3 px-2 mb-8">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-weight="fill">neurology</span>
+</div>
+<div>
+<h3 class="text-white font-bold font-h2 text-sm leading-none">Genius Brain</h3>
+<p class="font-mono text-[10px] uppercase tracking-widest text-[#5e5ce6]">Nursery V2.0</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 bg-[#2c2c2e] text-[#5e5ce6] rounded-lg font-mono text-xs uppercase tracking-widest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-sm">history_edu</span>
+<span>Audit Ledger</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-gray-400 hover:text-white hover:bg-[#2c2c2e] rounded-lg font-mono text-xs uppercase tracking-widest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-sm">settings_backup_restore</span>
+<span>Undo Journal</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-gray-400 hover:text-white hover:bg-[#2c2c2e] rounded-lg font-mono text-xs uppercase tracking-widest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-sm">shield_lock</span>
+<span>Policy Settings</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-[#2c2c2e] pt-4 space-y-4">
+<a class="flex items-center gap-3 px-3 py-2 text-gray-400 hover:text-white hover:bg-[#2c2c2e] rounded-lg font-mono text-xs uppercase tracking-widest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-sm">analytics</span>
+<span>System Health</span>
+</a>
+<button class="w-full py-3 bg-error text-on-error font-bold text-xs uppercase tracking-widest rounded-lg scale-95 active:opacity-80 transition-transform">
+                Emergency Stop
+            </button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-64 mt-14 p-6 h-[calc(100vh-3.5rem)] overflow-hidden bg-background">
+<div class="max-w-7xl mx-auto h-full flex flex-col gap-6">
+<!-- Header HUD Section -->
+<div class="flex justify-between items-end">
+<div>
+<h1 class="font-h1 text-h1 text-white flex items-center gap-3">
+                        System Audit Ledger
+                        <span class="bg-primary-container/20 text-primary-container text-[10px] px-2 py-0.5 rounded font-mono tracking-widest">LIVE_FEED</span>
+</h1>
+<p class="font-body-md text-on-surface-variant mt-1">Immutable record of all autonomous system activities and security decisions.</p>
+</div>
+<div class="flex gap-3">
+<div class="bg-[#1c1c1e] px-4 py-2 rounded-lg flex flex-col items-end">
+<span class="font-mono text-[10px] text-gray-500 uppercase">Total Entries</span>
+<span class="font-mono text-lg font-bold text-white">1,248,302</span>
+</div>
+<div class="bg-[#1c1c1e] px-4 py-2 rounded-lg flex flex-col items-end">
+<span class="font-mono text-[10px] text-gray-500 uppercase">Last Integrity Check</span>
+<span class="font-mono text-lg font-bold text-primary-container">PASS</span>
+</div>
+</div>
+</div>
+<!-- Search & Filter Bar -->
+<div class="bg-[#1c1c1e] p-4 rounded-xl flex items-center gap-4">
+<div class="flex-1 relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">search</span>
+<input class="w-full bg-[#2c2c2e] border-none rounded-lg pl-10 pr-4 py-2 text-sm text-on-surface focus:ring-1 focus:ring-primary-container transition-all" placeholder="Search commands, intent, or results..." type="text"/>
+</div>
+<div class="flex gap-2">
+<button class="bg-[#2c2c2e] px-3 py-2 rounded-lg text-xs font-semibold text-white flex items-center gap-2 hover:bg-surface-bright transition-all">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                        Filter
+                    </button>
+<button class="bg-[#2c2c2e] px-3 py-2 rounded-lg text-xs font-semibold text-white flex items-center gap-2 hover:bg-surface-bright transition-all">
+<span class="material-symbols-outlined text-sm">download</span>
+                        Export JSON
+                    </button>
+</div>
+</div>
+<!-- Audit Log Table -->
+<div class="flex-1 bg-[#1c1c1e] rounded-xl overflow-hidden flex flex-col border border-transparent">
+<!-- Table Header -->
+<div class="grid grid-cols-[180px_1fr_120px_120px_120px] px-6 py-4 border-b border-[#2c2c2e] bg-[#1c1c1e] font-mono text-[10px] text-gray-500 uppercase tracking-widest scanline">
+<div>Timestamp</div>
+<div>Activity Summary (Input &amp; Intent)</div>
+<div class="text-center">Guard Decision</div>
+<div class="text-center">Approval</div>
+<div class="text-right">Status</div>
+</div>
+<!-- Log List -->
+<div class="flex-1 overflow-y-auto custom-scrollbar">
+<!-- Row 1: Success -->
+<div class="grid grid-cols-[180px_1fr_120px_120px_120px] px-6 py-5 border-b border-[#2c2c2e] hover:bg-[#2c2c2e] transition-all group">
+<div class="font-mono text-xs text-gray-500 self-start">
+                            2024-05-20 14:22:01.04
+                        </div>
+<div class="flex flex-col gap-1">
+<span class="font-semibold text-[#e5e2e1] text-sm">exec node_rebalance --target zone-4a</span>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-mono bg-[#2c2c2e] text-[#cccccc] px-1.5 py-0.5 rounded">INTENT</span>
+<span class="text-xs text-[#cccccc]">Automated load balancing for persistent low latency in Nursery clusters.</span>
+</div>
+</div>
+<div class="flex justify-center items-start">
+<span class="bg-primary-container/10 text-primary-container border border-primary-container/20 text-[10px] px-2 py-1 rounded-full font-bold">ALLOWED</span>
+</div>
+<div class="flex justify-center items-start text-primary-container">
+<span class="material-symbols-outlined text-lg" data-weight="fill">verified_user</span>
+</div>
+<div class="text-right self-start">
+<span class="text-xs font-bold text-green-400">SUCCESS</span>
+<p class="text-[10px] text-gray-500 mt-1">2.4ms lat shift</p>
+</div>
+</div>
+<!-- Row 2: Warning/Denied -->
+<div class="grid grid-cols-[180px_1fr_120px_120px_120px] px-6 py-5 border-b border-[#2c2c2e] hover:bg-[#2c2c2e] transition-all group">
+<div class="font-mono text-xs text-gray-500 self-start">
+                            2024-05-20 14:19:58.32
+                        </div>
+<div class="flex flex-col gap-1">
+<span class="font-semibold text-[#e5e2e1] text-sm">sudo rm -rf /core/security/vault</span>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-mono bg-[#2c2c2e] text-[#cccccc] px-1.5 py-0.5 rounded">INTENT</span>
+<span class="text-xs text-[#cccccc]">High-risk deletion command detected from external terminal session.</span>
+</div>
+</div>
+<div class="flex justify-center items-start">
+<span class="bg-error/10 text-error border border-error/20 text-[10px] px-2 py-1 rounded-full font-bold">BLOCK</span>
+</div>
+<div class="flex justify-center items-start text-error">
+<span class="material-symbols-outlined text-lg" data-weight="fill">gpp_bad</span>
+</div>
+<div class="text-right self-start">
+<span class="text-xs font-bold text-error uppercase">Refused</span>
+<p class="text-[10px] text-error/60 mt-1">Policy Violation: P-900</p>
+</div>
+</div>
+<!-- Row 3: Manual Approval -->
+<div class="grid grid-cols-[180px_1fr_120px_120px_120px] px-6 py-5 border-b border-[#2c2c2e] hover:bg-[#2c2c2e] transition-all group">
+<div class="font-mono text-xs text-gray-500 self-start">
+                            2024-05-20 14:05:12.88
+                        </div>
+<div class="flex flex-col gap-1">
+<span class="font-semibold text-[#e5e2e1] text-sm">update --force global-os-kernel</span>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-mono bg-[#2c2c2e] text-[#cccccc] px-1.5 py-0.5 rounded">INTENT</span>
+<span class="text-xs text-[#cccccc]">Forced system-wide update to patch zero-day vulnerability CVE-2024-11.</span>
+</div>
+</div>
+<div class="flex justify-center items-start">
+<span class="bg-primary-container/10 text-primary-container border border-primary-container/20 text-[10px] px-2 py-1 rounded-full font-bold">BYPASS</span>
+</div>
+<div class="flex justify-center items-start text-primary-container">
+<span class="material-symbols-outlined text-lg" data-weight="fill">person</span>
+</div>
+<div class="text-right self-start">
+<span class="text-xs font-bold text-green-400">EXECUTED</span>
+<p class="text-[10px] text-gray-500 mt-1">Manual Override</p>
+</div>
+</div>
+<!-- Row 4: Error -->
+<div class="grid grid-cols-[180px_1fr_120px_120px_120px] px-6 py-5 border-b border-[#2c2c2e] hover:bg-[#2c2c2e] transition-all group">
+<div class="font-mono text-xs text-gray-500 self-start">
+                            2024-05-20 13:58:04.11
+                        </div>
+<div class="flex flex-col gap-1">
+<span class="font-semibold text-[#e5e2e1] text-sm">backup --sync remote-storage-tokyo</span>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-mono bg-[#2c2c2e] text-[#cccccc] px-1.5 py-0.5 rounded">INTENT</span>
+<span class="text-xs text-[#cccccc]">Routine off-site data archival and redundancy sync.</span>
+</div>
+</div>
+<div class="flex justify-center items-start">
+<span class="bg-primary-container/10 text-primary-container border border-primary-container/20 text-[10px] px-2 py-1 rounded-full font-bold">ALLOWED</span>
+</div>
+<div class="flex justify-center items-start text-primary-container">
+<span class="material-symbols-outlined text-lg" data-weight="fill">verified_user</span>
+</div>
+<div class="text-right self-start">
+<span class="text-xs font-bold text-amber-500 uppercase">Failed</span>
+<p class="text-[10px] text-amber-500/60 mt-1">Timeout Error: 504</p>
+</div>
+</div>
+<!-- Row 5: AI Auto-correction -->
+<div class="grid grid-cols-[180px_1fr_120px_120px_120px] px-6 py-5 border-b border-[#2c2c2e] hover:bg-[#2c2c2e] transition-all group">
+<div class="font-mono text-xs text-gray-500 self-start">
+                            2024-05-20 13:42:33.45
+                        </div>
+<div class="flex flex-col gap-1">
+<span class="font-semibold text-[#e5e2e1] text-sm">optimize --all</span>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-mono bg-[#2c2c2e] text-[#cccccc] px-1.5 py-0.5 rounded">INTENT</span>
+<span class="text-xs text-[#cccccc]">Full stack optimization to reduce heat generation in core 12-24.</span>
+</div>
+</div>
+<div class="flex justify-center items-start">
+<span class="bg-primary-container/10 text-primary-container border border-primary-container/20 text-[10px] px-2 py-1 rounded-full font-bold">MODIFIED</span>
+</div>
+<div class="flex justify-center items-start text-primary-container">
+<span class="material-symbols-outlined text-lg" data-weight="fill">auto_awesome</span>
+</div>
+<div class="text-right self-start">
+<span class="text-xs font-bold text-green-400 uppercase">Success</span>
+<p class="text-[10px] text-gray-500 mt-1">Capped at 80%</p>
+</div>
+</div>
+</div>
+<!-- Footer Status -->
+<div class="p-3 bg-[#1c1c1e] border-t border-[#2c2c2e] flex justify-between items-center px-6">
+<div class="flex items-center gap-4 text-[10px] font-mono text-gray-500 uppercase">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                            Ledger Synchronized
+                        </div>
+<div>Entries: 1,248,302</div>
+<div>Uptime: 423d 12h 04m</div>
+</div>
+<div class="flex gap-1">
+<button class="w-8 h-8 rounded flex items-center justify-center hover:bg-[#2c2c2e] transition-colors text-gray-400">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<span class="flex items-center px-2 text-[10px] font-mono text-white">PAGE 1 OF 24,966</span>
+<button class="w-8 h-8 rounded flex items-center justify-center hover:bg-[#2c2c2e] transition-colors text-gray-400">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Side Decoration / HUD elements -->
+<div class="fixed right-6 top-20 flex flex-col gap-4 pointer-events-none opacity-20 hidden 2xl:flex">
+<div class="w-32 h-32 border border-primary-container rounded-full flex items-center justify-center p-4">
+<div class="w-full h-full border border-dashed border-primary-container/40 rounded-full animate-[spin_10s_linear_infinite]"></div>
+<span class="absolute font-mono text-[10px] text-primary-container">INTEGRITY OK</span>
+</div>
+<div class="space-y-1">
+<div class="h-1 bg-primary-container w-full"></div>
+<div class="h-1 bg-primary-container/40 w-2/3 ml-auto"></div>
+<div class="h-1 bg-primary-container/10 w-1/2 ml-auto"></div>
+</div>
+</div>
+</body></html>

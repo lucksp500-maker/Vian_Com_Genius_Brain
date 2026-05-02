@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @font-face {
+            font-family: 'SF Pro Display';
+            src: url('https://fonts.cdnfonts.com/s/12165/SFProDisplay-Regular.woff') format('woff');
+        }
+        body {
+            background-color: #111111;
+            color: #e4e1ed;
+            font-family: 'Manrope', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scanline {
+            background: linear-gradient(to bottom, transparent 50%, rgba(94, 92, 230, 0.05) 50%);
+            background-size: 100% 4px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-container": "#5e5ce6",
+                        "secondary": "#c8c6c8",
+                        "on-surface-variant": "#c7c4d7",
+                        "error": "#ffb4ab",
+                        "on-tertiary": "#502400",
+                        "inverse-surface": "#e4e1ed",
+                        "on-primary": "#1800a7",
+                        "secondary-container": "#474649",
+                        "surface": "#13131b",
+                        "surface-tint": "#c2c1ff",
+                        "primary-fixed": "#e2dfff",
+                        "on-error": "#690005",
+                        "on-primary-fixed-variant": "#332dbc",
+                        "on-primary-fixed": "#0c006b",
+                        "primary": "#c2c1ff",
+                        "primary-fixed-dim": "#c2c1ff",
+                        "on-secondary": "#303032",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "inverse-on-surface": "#302f38",
+                        "surface-container-lowest": "#0e0d15",
+                        "on-tertiary-fixed-variant": "#723600",
+                        "tertiary-container": "#ae5600",
+                        "surface-container-low": "#1b1b23",
+                        "on-tertiary-container": "#ffefe7",
+                        "on-secondary-fixed-variant": "#474649",
+                        "inverse-primary": "#4d4ad5",
+                        "on-primary-container": "#f4f1ff",
+                        "outline": "#918fa0",
+                        "on-surface": "#e4e1ed",
+                        "on-secondary-container": "#b6b4b7",
+                        "on-tertiary-fixed": "#311300",
+                        "secondary-fixed": "#e4e2e4",
+                        "on-secondary-fixed": "#1b1b1d",
+                        "surface-bright": "#393841",
+                        "tertiary-fixed-dim": "#ffb786",
+                        "surface-container-highest": "#34343d",
+                        "on-background": "#e4e1ed",
+                        "surface-container-high": "#2a2932",
+                        "surface-variant": "#34343d",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#ffb786",
+                        "surface-dim": "#13131b",
+                        "outline-variant": "#464554",
+                        "surface-container": "#1f1f27",
+                        "tertiary-fixed": "#ffdcc6",
+                        "error-container": "#93000a",
+                        "background": "#13131b"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "unit": "8px",
+                        "3xl": "64px",
+                        "xl": "32px",
+                        "2xl": "48px",
+                        "sm": "8px",
+                        "gutter": "16px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "lg": "24px",
+                        "container-margin": "24px"
+                    },
+                    fontFamily: {
+                        "h1": ["SF Pro Display"],
+                        "label-md": ["manrope"],
+                        "display-lg": ["SF Pro Display"],
+                        "body-md": ["manrope"],
+                        "h2": ["SF Pro Display"],
+                        "body-lg": ["manrope"],
+                        "caption": ["manrope"]
+                    },
+                    fontSize: {
+                        "h1": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "h2": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "caption": ["12px", {"lineHeight": "1.4", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface overflow-hidden">
+<!-- Top Navigation Anchor (Shared Component) -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-14 bg-[#1c1c1e] border-b border-transparent">
+<div class="flex items-center gap-xl">
+<span class="text-lg font-black tracking-widest text-white uppercase font-h1">Vian CommandOS</span>
+<nav class="hidden md:flex gap-lg items-center">
+<a class="text-[#5e5ce6] border-b border-[#5e5ce6] pb-1 font-caption uppercase tracking-tighter" href="#">HUD</a>
+<a class="text-gray-500 hover:text-gray-300 transition-colors font-caption uppercase tracking-tighter" href="#">Audit Ledger</a>
+<a class="text-gray-500 hover:text-gray-300 transition-colors font-caption uppercase tracking-tighter" href="#">Undo Journal</a>
+<a class="text-gray-500 hover:text-gray-300 transition-colors font-caption uppercase tracking-tighter" href="#">Policy</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-secondary hover:bg-[#2c2c2e] p-sm rounded-lg transition-all" data-icon="security">security</button>
+<button class="material-symbols-outlined text-secondary hover:bg-[#2c2c2e] p-sm rounded-lg transition-all" data-icon="monitor_heart">monitor_heart</button>
+<button class="material-symbols-outlined text-secondary hover:bg-[#2c2c2e] p-sm rounded-lg transition-all" data-icon="settings">settings</button>
+<div class="w-8 h-8 rounded-full bg-surface-container overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A professional close-up portrait of a tech-savvy individual with a focused expression, set against a dark, minimalist studio background. The lighting is low-key and dramatic, with soft blue rim lighting highlighting the contours of their face, perfectly matching the high-tech, dark mode UI aesthetic of the Vian CommandOS system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDl-Ckp28RjUdjvdXz6alKtQl9MrIH7vyjGXiC7FFeIBtqKffRCpKB9mEJi7XI3mpr0MsWj4FXvggEl12KIPNZsqqWPyXeZ1xjJvuHCw46tm5ci0Fx6UQaxVSFY6G1Frhob8CWUl-CVEJKRP7_N9-0oiMvZzKQ1w6-ka6RnVEf34efMxY1D4336_JeZ70ajTWGbVWXZNR3KwPFcP7DEf9GnnGl_SxmKttj301hgxeBzuEKx1eXmLhdREGUQvi5fKwiiN1WgcQ09VteB"/>
+</div>
+</div>
+</header>
+<!-- Side Navigation Shell (Shared Component) -->
+<aside class="fixed left-0 top-14 h-[calc(100vh-3.5rem)] flex flex-col p-4 bg-[#1c1c1e] w-64 z-40 hidden lg:flex">
+<div class="flex items-center gap-md mb-xl p-md">
+<div class="w-10 h-10 rounded-lg bg-[#2c2c2e] flex items-center justify-center">
+<span class="material-symbols-outlined text-[#5e5ce6]" data-icon="neurology">neurology</span>
+</div>
+<div>
+<h3 class="text-white font-bold font-h2 text-sm leading-none">Genius Brain</h3>
+<p class="text-gray-500 font-caption text-[10px] uppercase tracking-widest mt-1">Nursery V2.0</p>
+</div>
+</div>
+<div class="space-y-sm flex-1">
+<div class="flex items-center gap-md p-md bg-[#2c2c2e] text-[#5e5ce6] rounded-lg cursor-pointer transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+<span class="font-caption uppercase tracking-widest text-[11px]">Audit Ledger</span>
+</div>
+<div class="flex items-center gap-md p-md text-gray-400 hover:text-white hover:bg-[#2c2c2e] rounded-lg cursor-pointer transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="settings_backup_restore">settings_backup_restore</span>
+<span class="font-caption uppercase tracking-widest text-[11px]">Undo Journal</span>
+</div>
+<div class="flex items-center gap-md p-md text-gray-400 hover:text-white hover:bg-[#2c2c2e] rounded-lg cursor-pointer transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="shield_lock">shield_lock</span>
+<span class="font-caption uppercase tracking-widest text-[11px]">Policy Settings</span>
+</div>
+</div>
+<div class="mt-auto border-t border-[#2c2c2e] pt-xl">
+<button class="w-full bg-error-container text-on-error-container font-h2 text-xs py-md rounded-lg flex items-center justify-center gap-sm mb-lg hover:bg-error transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="emergency_home">emergency_home</span>
+                EMERGENCY STOP
+            </button>
+<div class="flex items-center gap-md p-md text-gray-400 hover:text-white cursor-pointer">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-caption uppercase tracking-widest text-[11px]">System Health</span>
+</div>
+</div>
+</aside>
+<!-- Main Command Interface Canvas -->
+<main class="lg:ml-64 pt-14 h-screen relative flex flex-col items-center justify-center scanline">
+<!-- Background Graphic Elements -->
+<div class="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-[#5e5ce6] rounded-full opacity-20"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-[#5e5ce6] rounded-full opacity-40"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-[#5e5ce6] rounded-full opacity-60"></div>
+</div>
+<!-- HUD Input Container -->
+<div class="w-full max-w-3xl px-lg z-10">
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-md px-xs">
+<div>
+<h1 class="font-h1 text-white text-xl flex items-center gap-sm">
+<span class="material-symbols-outlined text-[#5e5ce6]" data-icon="terminal">terminal</span>
+                        Command Node_01
+                    </h1>
+<p class="font-caption text-gray-500 uppercase tracking-widest mt-1">Awaiting high-priority instruction...</p>
+</div>
+<!-- Status Indicator -->
+<div class="flex items-center gap-sm bg-[#1c1c1e] px-md py-xs rounded-full">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="font-caption text-[10px] text-emerald-500 uppercase tracking-widest">Guard: Active Policy</span>
+</div>
+</div>
+<!-- Central Input Field -->
+<div class="bg-[#1c1c1e] p-unit rounded-xl shadow-2xl relative group">
+<div class="flex items-center gap-md bg-[#252528] rounded-lg p-md transition-all group-focus-within:bg-[#2c2c2e]">
+<span class="material-symbols-outlined text-gray-500" data-icon="command">keyboard_command_key</span>
+<input class="bg-transparent border-none focus:ring-0 text-white w-full font-body-md placeholder:text-gray-600 text-lg" placeholder="Enter system command or natural language instruction..." type="text"/>
+<div class="flex items-center gap-sm">
+<button class="p-sm text-gray-500 hover:text-white transition-colors" title="Speech Control">
+<span class="material-symbols-outlined" data-icon="mic">mic</span>
+</button>
+<button class="bg-[#5e5ce6] text-white px-xl py-sm rounded-lg font-h2 text-sm flex items-center gap-sm hover:opacity-90 active:scale-95 transition-all">
+                            EXECUTE
+                            <span class="material-symbols-outlined text-sm" data-icon="keyboard_return">keyboard_return</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Command Suggestions (Dynamic Grid) -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-md mt-xl">
+<button class="bg-[#1c1c1e] p-md rounded-lg text-left hover:bg-[#2c2c2e] transition-all group">
+<div class="flex items-center justify-between mb-sm">
+<span class="material-symbols-outlined text-[#5e5ce6] text-lg" data-icon="query_stats">query_stats</span>
+<span class="font-caption text-[9px] text-gray-600 group-hover:text-gray-400">⌘+1</span>
+</div>
+<p class="font-caption text-[10px] text-gray-500 uppercase tracking-wider mb-xs">Analyze</p>
+<p class="text-white font-body-md text-xs truncate">Audit system logs for anomalies</p>
+</button>
+<button class="bg-[#1c1c1e] p-md rounded-lg text-left hover:bg-[#2c2c2e] transition-all group">
+<div class="flex items-center justify-between mb-sm">
+<span class="material-symbols-outlined text-[#5e5ce6] text-lg" data-icon="deployed_code">deployed_code</span>
+<span class="font-caption text-[9px] text-gray-600 group-hover:text-gray-400">⌘+2</span>
+</div>
+<p class="font-caption text-[10px] text-gray-500 uppercase tracking-wider mb-xs">Deploy</p>
+<p class="text-white font-body-md text-xs truncate">Push v2.4 to staging cluster</p>
+</button>
+<button class="bg-[#1c1c1e] p-md rounded-lg text-left hover:bg-[#2c2c2e] transition-all group">
+<div class="flex items-center justify-between mb-sm">
+<span class="material-symbols-outlined text-[#5e5ce6] text-lg" data-icon="lock_reset">lock_reset</span>
+<span class="font-caption text-[9px] text-gray-600 group-hover:text-gray-400">⌘+3</span>
+</div>
+<p class="font-caption text-[10px] text-gray-500 uppercase tracking-wider mb-xs">Security</p>
+<p class="text-white font-body-md text-xs truncate">Rotate credential keys</p>
+</button>
+<button class="bg-[#1c1c1e] p-md rounded-lg text-left hover:bg-[#2c2c2e] transition-all group">
+<div class="flex items-center justify-between mb-sm">
+<span class="material-symbols-outlined text-error text-lg" data-icon="stop_circle">stop_circle</span>
+<span class="font-caption text-[9px] text-gray-600 group-hover:text-gray-400">ESC</span>
+</div>
+<p class="font-caption text-[10px] text-gray-500 uppercase tracking-wider mb-xs">Terminate</p>
+<p class="text-white font-body-md text-xs truncate">Kill active subprocesses</p>
+</button>
+</div>
+<!-- System Metrics Footer (HUD Centric) -->
+<div class="mt-3xl flex justify-between items-center border-t border-[#1c1c1e] pt-lg">
+<div class="flex gap-xl">
+<div>
+<p class="font-caption text-[9px] text-gray-600 uppercase tracking-[0.2em]">CPU Load</p>
+<p class="font-h2 text-sm text-[#5e5ce6]">12.4%</p>
+</div>
+<div>
+<p class="font-caption text-[9px] text-gray-600 uppercase tracking-[0.2em]">Latency</p>
+<p class="font-h2 text-sm text-white">42ms</p>
+</div>
+<div>
+<p class="font-caption text-[9px] text-gray-600 uppercase tracking-[0.2em]">Nodes</p>
+<p class="font-h2 text-sm text-white">1,204</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-caption text-[9px] text-gray-600 uppercase tracking-[0.2em]">Session ID</p>
+<p class="font-body-md text-[10px] text-gray-400 font-mono">VX-0941-GAMMA-7</p>
+</div>
+</div>
+</div>
+<!-- Asymmetric Background Content (System Preview) -->
+<div class="absolute right-6 top-24 w-72 h-96 pointer-events-none opacity-20 hidden 2xl:block">
+<div class="bg-[#1c1c1e] w-full h-full rounded-2xl p-lg flex flex-col gap-md">
+<div class="h-1 bg-[#2c2c2e] w-full rounded-full">
+<div class="bg-[#5e5ce6] h-full w-2/3 rounded-full"></div>
+</div>
+<div class="space-y-sm">
+<div class="h-2 bg-[#2c2c2e] w-3/4 rounded"></div>
+<div class="h-2 bg-[#2c2c2e] w-1/2 rounded"></div>
+<div class="h-2 bg-[#2c2c2e] w-5/6 rounded"></div>
+</div>
+<img alt="Data streams" class="w-full h-32 object-cover rounded-lg mt-auto opacity-50 grayscale" data-alt="A futuristic visualization of encrypted data streams flowing through a dark void, rendered in high-contrast neon blues and purples. The visual style is abstract and architectural, suggesting a complex network of information within a highly secure server environment, emphasizing the sophisticated and utilitarian nature of the CommandOS platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBxhW9JTetNdbVz5L9p_FUky0UbJSoF-u4AAE7CN6RI2VeCURQtmSH41HXq0snR_XiU-7Ylt_uZr49Pg54qTLbtQ77XCMOTuCBd6NvNez8g4t6Rk9UjrK30uDlXzbgPQGd1jpVU3wsi3Igalv0pOAxUMpsq78AM_F385lElwlHXjPf98p3U0Hwiy00Z_tn0hOPqiLEYehtoB3WCPq72M4h3gyWSleZqYY_mqsJobXhyxlGJvCOI--d94LLiJ9Ru8Z97xTdO0H_uDuE"/>
+</div>
+</div>
+</main>
+<!-- Contextual System Feedback Overlay (Toast-like HUD element) -->
+<div class="fixed bottom-lg right-lg flex flex-col gap-md items-end z-50">
+<div class="bg-[#1c1c1e] p-md rounded-lg shadow-xl border-l-4 border-[#5e5ce6] flex items-start gap-md max-w-xs animate-in slide-in-from-right duration-500">
+<span class="material-symbols-outlined text-[#5e5ce6]" data-icon="info">info</span>
+<div>
+<p class="font-h2 text-xs text-white">System Ready</p>
+<p class="font-caption text-[11px] text-gray-500 mt-1">Primary command buffer cleared. Awaiting user input on Layer-1.</p>
+</div>
+</div>
+</div>
+</body></html>
