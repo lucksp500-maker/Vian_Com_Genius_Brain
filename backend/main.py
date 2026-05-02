@@ -15,6 +15,7 @@ from backend.api.local_index_router import router as local_index_router
 from backend.api.local_index_router import preview_router as local_preview_router
 from backend.api.audit_router import router as audit_router
 from backend.api.audit_router import undo_router
+from backend.api.browser_router import router as browser_router
 
 app = FastAPI(
     title="Vian CommandOS × Genius Brain",
@@ -42,6 +43,7 @@ app.include_router(local_index_router)
 app.include_router(local_preview_router)
 app.include_router(audit_router)
 app.include_router(undo_router)
+app.include_router(browser_router)  # WO-007: 브라우저 자동화 어댑터
 
 # React 프론트엔드 SPA 서빙 (빌드 후)
 _frontend_dist = Path(__file__).parent.parent / "frontend" / "dist"
