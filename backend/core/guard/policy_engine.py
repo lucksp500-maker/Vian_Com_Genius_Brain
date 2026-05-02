@@ -47,7 +47,8 @@ def evaluate(spec: ActionSpec) -> PolicyEvaluation:
     ActionSpec에 대해 정책 판정을 수행합니다.
 
     판정 우선순위:
-    1. target_type=unknown AND requires_approval=True → deny
+    0. target_type=system → ask (위험도/승인 무관, C-07)
+    1. target_type=unknown → deny (requires_approval 무관, C-09 Fix)
     2. risk_level=high 또는 requires_approval=True → ask
     3. risk_level=medium → ask
     4. risk_level=none 또는 low → allow

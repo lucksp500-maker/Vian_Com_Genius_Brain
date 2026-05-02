@@ -64,8 +64,9 @@ _COMPILED: list[tuple[str, re.Pattern[str], str]] = [
     for name, pattern, desc in _PATTERNS
 ]
 
-# 제로폭/비가시 유니코드 문자 탐지 (최소 3개 이상 연속)
-_INVISIBLE_RE = re.compile(r"[\u200b\u200c\u200d\u200e\u200f\ufeff\u00ad]{3,}")
+# 제로폭/비가시 유니코드 문자 탐지 (2개 이상 연속 — 3이면 2개로 우회 가능)
+# NC-01 Fix: {3,} → {2,} — 2개 ZWC로 injection 분할 우회 차단 (실증 확인 2026-05-02)
+_INVISIBLE_RE = re.compile(r"[\u200b\u200c\u200d\u200e\u200f\ufeff\u00ad]{2,}")
 
 # C-06 Fix: Cyrillic 동형이자 → Latin ASCII 매핑 (NFKC는 이 변환 미지원)
 # Cyrillic 문자가 Latin과 시각적으로 동일하지만 다른 코드포인트를 가짐
