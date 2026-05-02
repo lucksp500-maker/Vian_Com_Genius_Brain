@@ -59,6 +59,8 @@ def _init_db(db_path: Path) -> None:
     db_path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(db_path))
     try:
+        # H-09 Fix: WAL 모드 — 동시 읽기/쓰기 성능 개선 + 'database is locked' 방지
+        conn.execute("PRAGMA journal_mode=WAL")
         conn.executescript(_CREATE_SQL)
         conn.commit()
     finally:

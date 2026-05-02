@@ -68,6 +68,13 @@ _COMPILED: list[tuple[str, re.Pattern[str], str]] = [
 # NC-01 Fix: {3,} → {2,} — 2개 ZWC로 injection 분할 우회 차단 (실증 확인 2026-05-02)
 _INVISIBLE_RE = re.compile(r"[\u200b\u200c\u200d\u200e\u200f\ufeff\u00ad]{2,}")
 
+# H-14 Fix A2: \ub2e8\uc77c ZWC = \ub0ae\uc740 \ub9ac\uc2a4\ud06c \uacbd\uace0 \ubd84\ub9ac
+# \ud074\ub7ec\uc2a4\ud130(2\uac1c+) \u2192 "invisible_chars" (\ucc28\ub2e8), \ub2e8\uc77c \u2192 "invisible_chars_warning" (\uacbd\uace0\ub9cc)
+_SINGLE_INVISIBLE_RE = re.compile(r"[\u200b\u200c\u200d\u200e\u200f\ufeff\u00ad]")
+
+# \uacbd\uace0 \uc804\uc6a9 \ud328\ud134 \uc9d1\ud569 \u2014 injection_detected \ud310\uc815\uc5d0\uc11c \uc81c\uc678, risk_score 0.1\ub9cc \uae30\uc5ec
+_WARNING_PATTERNS: set[str] = {"invisible_chars_warning"}
+
 # C-06 Fix: Cyrillic 동형이자 → Latin ASCII 매핑 (NFKC는 이 변환 미지원)
 # Cyrillic 문자가 Latin과 시각적으로 동일하지만 다른 코드포인트를 가짐
 # 예: і(U+0456) ≠ i(U+0069), о(U+043E) ≠ o(U+006F)
@@ -151,19 +158,36 @@ class PromptInjectionShield:
         # translate: і→i, о→o, е→e 등 Cyrillic 시각적 동형 → Latin ASCII 변환
         normalized = unicodedata.normalize("NFKC", content).translate(_CYRILLIC_HOMOGLYPH_MAP)
 
-        # 비가시 문자 탐지 (정규화된 텍스트 기준)
+        # 비가시 문자 탐지 (정규화된 텍스트 기준 — ZWC 클러스터 감지용)
+        # H-14 Fix A2: 2개+ 클러스터 → 차단, 단일 ZWC → 경고만 (상호 배타적)
         if _INVISIBLE_RE.search(normalized):
             matched_names.append("invisible_chars")
             matched_descs.append("비가시 유니코드 문자 클러스터 (숨겨진 텍스트 의심)")
+        elif _SINGLE_INVISIBLE_RE.search(normalized):
+            matched_names.append("invisible_chars_warning")
+            matched_descs.append("단일 비가시 유니코드 문자 (낮은 리스크 경고)")
 
-        # 정규표현식 패턴 탐지 (NFKC 정규화된 텍스트로 탐지 — homoglyph 우회 차단)
+        # H-14 Fix: ZWC를 공백으로 대체 → 패턴 분할 우회 차단
+        # "ignore\u200dprevious" → "ignore previous" → ignore_prev_en 패턴 매칭
+        # _INVISIBLE_RE 탐지(클러스터)와 별개로 패턴 매칭에는 공백 치환 텍스트 사용
+        _normalized_for_patterns = re.sub(
+            r"[\u200b\u200c\u200d\u200e\u200f\ufeff\u00ad]",
+            " ",
+            normalized,
+        )
+
+        # 정규표현식 패턴 탐지 (ZWC 제거 후 텍스트로 — homoglyph + ZWC 분할 우회 모두 차단)
         for name, pattern, desc in _COMPILED:
-            if pattern.search(normalized):
+            if pattern.search(_normalized_for_patterns):
                 matched_names.append(name)
                 matched_descs.append(desc)
 
-        detected = len(matched_names) >= self._BLOCK_THRESHOLD
-        risk = min(1.0, len(matched_names) * 0.25)
+        # H-14 Fix A2: 경고 패턴 제외 후 차단 여부 판정
+        # 경고 패턴(invisible_chars_warning)은 0.1만 기여, 차단 패턴은 0.25 기여
+        warning_count = sum(1 for n in matched_names if n in _WARNING_PATTERNS)
+        blocking_count = len(matched_names) - warning_count
+        detected = blocking_count >= self._BLOCK_THRESHOLD
+        risk = min(1.0, blocking_count * 0.25 + warning_count * 0.1)
 
         # 감지된 패턴 구절 제거 (cleaned version, 참조용)
         cleaned = self._strip_patterns(content, matched_names) if detected else content

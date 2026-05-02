@@ -10,7 +10,7 @@ BrowserRouter — WO-007
 """
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import Response
 from pydantic import BaseModel
 from typing import Optional
@@ -19,6 +19,7 @@ from backend.core.browser.browser_automation_adapter import (
     BrowserAutomationAdapter,
     BrowserPushPayload,
     BrowserResult,
+    _ALLOWED_EXEC_STATES,
 )
 from backend.core.commandos.action_spec import ActionSpec
 
@@ -94,7 +95,19 @@ async def dispatch_command(req: DispatchRequest) -> DispatchResponse:
     """
     Guard 승인된 ActionSpec을 Extension 명령 큐에 등록합니다.
     Extension이 GET /queue/next 로 폴링하여 수거합니다.
+    H-18 Fix: execution_state 사전 검증 — 미승인 spec 403 반환
     """
+    # H-18 Fix: Guard/User 승인 없는 spec dispatch 차단 (HTTP 레이어 검증)
+    # adapter.dispatch()도 동일 검증 수행하지만 API 레이어에서 명시적 403 반환
+    if req.action_spec.execution_state not in _ALLOWED_EXEC_STATES:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=(
+                f"dispatch 불가: execution_state='{req.action_spec.execution_state}' "
+                f"(허용: {sorted(_ALLOWED_EXEC_STATES)})"
+            ),
+        )
+
     result = _adapter.dispatch(req.action_spec)
     return DispatchResponse(
         command_id=result.command_id,
@@ -176,6 +189,29 @@ async def collect_push(req: CollectRequest) -> CollectResponse:
         )
 
     spec = result.action_spec
+
+    # H-06 Fix: collect 경로에 Guard 적용 — Shield만으로 보안 불충분
+    # browser/collect는 Extension 팝업 직접 푸시 경로로 Guard를 우회함
+    # evaluate()로 risk/target_type 기반 정책 검사 추가
+    try:
+        from backend.core.guard.policy_engine import PolicyResult, evaluate
+        guard_result = evaluate(spec)
+        if guard_result.result == PolicyResult.deny:
+            return CollectResponse(
+                action_id=None,
+                blocked=True,
+                block_reason=f"Guard 정책 거부: {guard_result.reason}",
+                injection_risk=False,
+            )
+    except Exception:
+        # Guard 실패 시 안전 측(차단) 처리 — C-08 원칙과 동일
+        return CollectResponse(
+            action_id=None,
+            blocked=True,
+            block_reason="Guard 평가 실패 — 안전을 위해 차단",
+            injection_risk=False,
+        )
+
     from backend.core.commandos.action_spec import make_preview_url
     # C-11 Fix: collect로 생성된 ActionSpec을 hud_bridge._store에 등록
     # 이전에는 _store에 없어서 preview_url → GET /action-spec/{id} → 404 발생

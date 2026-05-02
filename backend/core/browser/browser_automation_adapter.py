@@ -36,6 +36,7 @@ from typing import Optional
 from backend.core.commandos.action_spec import (
     ActionSource,
     ActionSpec,
+    ExecutionState,
     RiskLevel,
     TargetType,
 )
@@ -50,6 +51,13 @@ _ACTION_POLICY: dict[str, tuple[RiskLevel, bool]] = {
 }
 
 _COMMAND_TTL_SECONDS = 60  # 명령 유효 시간
+
+# H-05 Fix: dispatch() 허용 execution_state 목록
+# guard_approved 또는 user_approved 상태만 Extension 큐 등록 허용
+_ALLOWED_EXEC_STATES: frozenset[str] = frozenset({
+    ExecutionState.guard_approved.value,
+    ExecutionState.user_approved.value,
+})
 
 
 # ─── 데이터 타입 ─────────────────────────────────────────────────
@@ -127,6 +135,9 @@ class BrowserAutomationAdapter:
         self._shield = PromptInjectionShield()
         # command_id → PendingCommand (in-memory, V1)
         self._queue: dict[str, PendingCommand] = {}
+        # H-04 Fix: pop-on-poll 데이터 손실 방지 — Extension ACK 전까지 명령 보존
+        # Extension이 poll 후 result POST 완료 전 크래시 시 재전송 가능
+        self._in_flight: dict[str, PendingCommand] = {}
 
     # ──────────────────── 송신 경로 ───────────────────────────────
 
@@ -137,6 +148,18 @@ class BrowserAutomationAdapter:
         action_spec.target_type 이 browser_tab 이어야 합니다.
         action_spec.execution_state 는 guard_approved 또는 user_approved 이어야 합니다.
         """
+        # H-05 Fix: execution_state 검증 — 미승인 spec 큐 등록 차단
+        if action_spec.execution_state not in _ALLOWED_EXEC_STATES:
+            return DispatchResult(
+                command_id="",
+                action_spec=action_spec,
+                queued=False,
+                reason=(
+                    f"execution_state '{action_spec.execution_state}'은 dispatch 불가 "
+                    f"(허용: {sorted(_ALLOWED_EXEC_STATES)})"
+                ),
+            )
+
         if action_spec.target_type != TargetType.browser_tab.value:
             return DispatchResult(
                 command_id="",
@@ -176,14 +199,26 @@ class BrowserAutomationAdapter:
     def pop_next_command(self) -> Optional[PendingCommand]:
         """
         Extension 폴링 엔드포인트 (GET /api/v1/browser/queue/next) 에서 호출.
-        가장 오래된 미만료 명령을 큐에서 꺼냅니다.
+        가장 오래된 미만료 명령을 _queue에서 _in_flight로 이동합니다.
+        H-04 Fix: 즉시 삭제(pop) 대신 in_flight 보존 — ACK(receive_result) 후 제거.
         """
         self._expire_old_commands()
         if not self._queue:
             return None
         # 가장 먼저 등록된 명령 반환 (FIFO)
         command_id = next(iter(self._queue))
-        return self._queue.pop(command_id)
+        cmd = self._queue.pop(command_id)
+        # H-04 Fix: _in_flight에 보존 (Extension result ACK 전까지)
+        self._in_flight[command_id] = cmd
+        return cmd
+
+    def ack_command(self, command_id: str) -> bool:
+        """
+        Extension result 수신 완료 후 in_flight에서 명령 제거 (ACK).
+        H-04 Fix: receive_result() 성공 시 호출되어야 함.
+        반환: True = 정상 ACK, False = 이미 만료/없음
+        """
+        return self._in_flight.pop(command_id, None) is not None
 
     # ──────────────────── 수신 경로 ───────────────────────────────
 
@@ -197,6 +232,8 @@ class BrowserAutomationAdapter:
         """
         scan = self._shield.scan(result.raw_content)
         if scan.injection_detected:
+            # H-04 Fix: 차단 시에도 in_flight ACK — 재전송 무의미 (악성 콘텐츠)
+            self.ack_command(result.command_id)
             return ReceiveResult(
                 success=False,
                 blocked=True,
@@ -204,6 +241,8 @@ class BrowserAutomationAdapter:
                 injection_risk=True,
             )
 
+        # H-04 Fix: 정상 수신 완료 → in_flight ACK (명령 제거)
+        self.ack_command(result.command_id)
         # V1: 저장은 AuditLedger/Archive 연동으로 확장 예정
         # 현재는 처리 성공으로 반환 (실제 저장은 browser_router.py에서 호출)
         return ReceiveResult(
@@ -252,11 +291,15 @@ class BrowserAutomationAdapter:
     # ──────────────────── 내부 헬퍼 ──────────────────────────────
 
     def _expire_old_commands(self) -> None:
-        """TTL 초과 명령 제거."""
+        """TTL 초과 명령 제거 (_queue + _in_flight 모두)."""
         now = datetime.now(timezone.utc)
-        expired = [cid for cid, cmd in self._queue.items() if cmd.expires_at < now]
-        for cid in expired:
+        expired_q = [cid for cid, cmd in self._queue.items() if cmd.expires_at < now]
+        for cid in expired_q:
             del self._queue[cid]
+        # H-04 Fix: in_flight TTL도 함께 만료 처리
+        expired_if = [cid for cid, cmd in self._in_flight.items() if cmd.expires_at < now]
+        for cid in expired_if:
+            del self._in_flight[cid]
 
     @staticmethod
     def _extract_action_type(spec: ActionSpec) -> str:

@@ -4,11 +4,13 @@ FastAPI 라우터: Audit Ledger + Undo Journal API 엔드포인트.
 """
 from __future__ import annotations
 
-from fastapi import APIRouter, Query
+import os
+
+from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from pydantic import BaseModel
 from typing import Optional
 
-from backend.core.audit.audit_ledger import AuditLedger, AuditRecord
+from backend.core.audit.audit_ledger import AuditLedger
 from backend.core.undo.undo_journal import UndoJournal
 
 router = APIRouter(prefix="/api/v1/audit", tags=["audit"])
@@ -17,46 +19,26 @@ undo_router = APIRouter(prefix="/api/v1/undo", tags=["undo"])
 _ledger = AuditLedger()
 _journal = UndoJournal()
 
-
-class AuditRecordRequest(BaseModel):
-    command: str
-    action_spec_id: str = ""
-    intent_class: str = ""
-    risk_class: str = ""
-    guard_decision: str = "pending"
-    approval_result: str = "pending"
-    execution_result: Optional[str] = None
-    error: Optional[str] = None
-    confidence: Optional[float] = None
-    raw_input: str = ""
+# H-11 Fix: 내부 전용 엔드포인트 토큰 검증
+# 환경변수 VIAN_INTERNAL_TOKEN 미설정 시 개발용 기본값 사용
+_INTERNAL_TOKEN = os.environ.get("VIAN_INTERNAL_TOKEN", "vian-internal-v1")
 
 
-class AuditRecordResponse(BaseModel):
-    audit_id: str
+def _verify_internal_token(x_internal_token: str = Header(...)) -> None:
+    """POST 쓰기 엔드포인트 내부 전용 토큰 검증. 외부 요청 차단."""
+    if x_internal_token != _INTERNAL_TOKEN:
+        raise HTTPException(status_code=403, detail="내부 전용 엔드포인트입니다.")
+
+
+# H-11 Fix: POST /api/v1/audit/record 엔드포인트 제거
+# 이유: 인증 없는 공개 API로 누구나 audit 기록 삽입/위변조 가능
+# 내부 AuditLedger.record()는 hud_bridge에서 직접 호출 — 외부 HTTP 노출 불필요
+# (AuditRecordRequest, AuditRecordResponse 클래스도 함께 제거)
 
 
 class AuditRecentResponse(BaseModel):
     records: list[dict]
     count: int
-
-
-@router.post("/record", response_model=AuditRecordResponse)
-async def record_audit(req: AuditRecordRequest) -> AuditRecordResponse:
-    """명령 실행 이력을 Audit Ledger에 기록합니다."""
-    rec = AuditRecord(
-        command=req.command,
-        action_spec_id=req.action_spec_id,
-        intent_class=req.intent_class,
-        risk_class=req.risk_class,
-        guard_decision=req.guard_decision,
-        approval_result=req.approval_result,
-        execution_result=req.execution_result,
-        error=req.error,
-        confidence=req.confidence,
-        raw_input=req.raw_input,
-    )
-    audit_id = await _ledger.record(rec)
-    return AuditRecordResponse(audit_id=audit_id)
 
 
 @router.get("/recent", response_model=AuditRecentResponse)
@@ -87,7 +69,7 @@ class UndoRecentResponse(BaseModel):
 
 
 @undo_router.post("/record", response_model=UndoRecordResponse)
-async def record_undo(req: UndoRecordRequest) -> UndoRecordResponse:
+async def record_undo(req: UndoRecordRequest, _: None = Depends(_verify_internal_token)) -> UndoRecordResponse:
     """파일 작업 전/후 상태를 Undo Journal에 기록합니다."""
     undo_id = await _journal.record_operation(
         req.operation_type, req.before_state, req.after_state, req.action_id

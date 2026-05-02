@@ -88,7 +88,10 @@ class TestDispatch:
 
     def test_non_browser_tab_spec_not_queued(self):
         adapter = BrowserAutomationAdapter()
+        # H-05 Fix: execution_state=guard_approved으로 설정해야 target_type 검사까지 도달
+        from backend.core.commandos.action_spec import ExecutionState
         spec = make_file_spec()
+        spec = spec.model_copy(update={"execution_state": ExecutionState.guard_approved})
         result = adapter.dispatch(spec)
         assert result.queued is False
         assert "browser_tab" in result.reason

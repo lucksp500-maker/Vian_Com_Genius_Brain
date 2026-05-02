@@ -13,6 +13,7 @@ import asyncio
 import hashlib
 import json
 import sqlite3
+import threading
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -22,6 +23,10 @@ from backend.core.commandos.action_spec import ActionSpec
 
 # [의존성] 연결: commandos_brain_router.py / 단독 수정 금지
 _DB_PATH = Path(__file__).parent.parent.parent / "data" / "decision_fingerprints.sqlite"
+
+# H-02 Fix: TOCTOU race condition 방지 — SELECT+INSERT 원자적 실행 보장
+# RLock 사용 이유: 재진입 안전 (같은 스레드 내 중첩 호출 허용)
+_FP_LOCK = threading.RLock()
 
 _CREATE_SQL = """
 CREATE TABLE IF NOT EXISTS decision_fingerprints (
@@ -36,7 +41,7 @@ CREATE TABLE IF NOT EXISTS decision_fingerprints (
     created_at      TEXT NOT NULL,
     updated_at      TEXT NOT NULL
 );
-CREATE INDEX IF NOT EXISTS idx_fp_input_hash ON decision_fingerprints(input_hash);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_fp_input_hash ON decision_fingerprints(input_hash);
 """
 
 
@@ -44,6 +49,8 @@ def _init_db(db_path: Path) -> None:
     db_path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(db_path))
     try:
+        # H-09 Fix: WAL 모드 — 동시 읽기/쓰기 성능 개선 + 'database is locked' 방지
+        conn.execute("PRAGMA journal_mode=WAL")
         conn.executescript(_CREATE_SQL)
         conn.commit()
     finally:
@@ -87,6 +94,21 @@ def _get_or_create_fingerprint_sync(
     db_path: Path,
 ) -> ConsistencyResult:
     """DB에서 fingerprint를 조회하고, 없으면 생성합니다. 동기 함수."""
+    # H-02 Fix: RLock으로 SELECT+INSERT 원자적 실행 — TOCTOU race condition 방지
+    with _FP_LOCK:
+        return _get_or_create_fingerprint_locked(
+            input_hash, intent_class, risk_class, reason_hash, db_path
+        )
+
+
+def _get_or_create_fingerprint_locked(
+    input_hash: str,
+    intent_class: str,
+    risk_class: str,
+    reason_hash: str,
+    db_path: Path,
+) -> ConsistencyResult:
+    """_FP_LOCK 획득 상태에서 호출되는 실제 DB 작업."""
     conn = sqlite3.connect(str(db_path))
     conn.row_factory = sqlite3.Row
     now = datetime.now(timezone.utc).isoformat()
@@ -99,28 +121,53 @@ def _get_or_create_fingerprint_sync(
 
         if row is None:
             # 최초 입력 — fingerprint 생성
+            # H-02 Fix: INSERT OR IGNORE — UNIQUE INDEX 위반 시 무시 후 재조회
+            # (RLock으로 같은 프로세스 내 race 차단, UNIQUE INDEX로 DB 수준 중복 방지)
             fp_id = hashlib.sha256(f"{input_hash}|{now}".encode()).hexdigest()[:24]
-            conn.execute(
-                """
-                INSERT INTO decision_fingerprints
-                    (fingerprint_id, input_hash, intent_class, risk_class,
-                     decision_hash, reason_hash, repeat_count, consistency_score,
-                     created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, 1, 1.0, ?, ?)
-                """,
-                (fp_id, input_hash, intent_class, risk_class,
-                 reason_hash, reason_hash, now, now),
-            )
-            conn.commit()
+            try:
+                conn.execute(
+                    """
+                    INSERT OR IGNORE INTO decision_fingerprints
+                        (fingerprint_id, input_hash, intent_class, risk_class,
+                         decision_hash, reason_hash, repeat_count, consistency_score,
+                         created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, 1, 1.0, ?, ?)
+                    """,
+                    (fp_id, input_hash, intent_class, risk_class,
+                     reason_hash, reason_hash, now, now),
+                )
+                conn.commit()
+            except sqlite3.IntegrityError:
+                conn.rollback()
+
+            # INSERT OR IGNORE 후 재조회 — 다른 연결이 먼저 삽입한 row 사용
+            row = conn.execute(
+                "SELECT * FROM decision_fingerprints WHERE input_hash = ? LIMIT 1",
+                (input_hash,),
+            ).fetchone()
+
+            if row is None:
+                # 재조회도 None이면 DB 오류 — 방어적 반환
+                return ConsistencyResult(
+                    fingerprint_id=fp_id,
+                    input_hash=input_hash,
+                    intent_class=intent_class,
+                    risk_class=risk_class,
+                    consistency_score=1.0,
+                    repeat_count=1,
+                    conflict_detected=False,
+                    recommended_action=_risk_to_action(risk_class),
+                )
+
             return ConsistencyResult(
-                fingerprint_id=fp_id,
+                fingerprint_id=row["fingerprint_id"],
                 input_hash=input_hash,
-                intent_class=intent_class,
-                risk_class=risk_class,
-                consistency_score=1.0,
-                repeat_count=1,
+                intent_class=row["intent_class"],
+                risk_class=row["risk_class"],
+                consistency_score=row["consistency_score"],
+                repeat_count=row["repeat_count"],
                 conflict_detected=False,
-                recommended_action=_risk_to_action(risk_class),
+                recommended_action=_risk_to_action(row["risk_class"]),
             )
         else:
             # 기존 fingerprint — 일관성 비교
