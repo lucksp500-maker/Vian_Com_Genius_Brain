@@ -29,8 +29,11 @@ class PolicyEvaluation(BaseModel):
     action_id: str
 
 
-# 즉시 deny — target_type=unknown이고 confidence 없는 경우
+# 즉시 deny — 대상 유형 불명확 (unknown) 또는 시스템 직접 접근 (system)
+# C-07: TargetType.system 추가 — risk_level/requires_approval 무관하게 ask 강제
+# C-09: unknown은 requires_approval 여부 무관하게 항상 deny
 _DENY_TARGET_TYPES = {TargetType.unknown.value}
+_FORCE_ASK_TARGET_TYPES = {TargetType.system.value}  # C-07: system → 반드시 ask
 
 # 항상 ask — risk_level medium 이상 또는 requires_approval=True
 _ASK_RISK_LEVELS = {RiskLevel.high.value, RiskLevel.medium.value}
@@ -53,11 +56,22 @@ def evaluate(spec: ActionSpec) -> PolicyEvaluation:
     risk = spec.risk_level
     target = spec.target_type
 
-    # 1순위: unknown + 승인 필요 → deny
-    if target in _DENY_TARGET_TYPES and spec.requires_approval:
+    # 0순위 (C-07): system target → 위험도/승인 여부 무관하게 반드시 ask
+    if target in _FORCE_ASK_TARGET_TYPES:
+        return PolicyEvaluation(
+            result=PolicyResult.ask,
+            reason=f"시스템 대상('{target}') — 위험도 무관하게 반드시 사용자 승인 필요",
+            risk_level=risk,
+            requires_approval=True,
+            action_id=spec.action_id,
+        )
+
+    # 1순위 (C-09 Fix): unknown → requires_approval 여부 무관하게 항상 deny
+    # 이전: "and spec.requires_approval" 조건이 있어 requires_approval=False 시 허용됨
+    if target in _DENY_TARGET_TYPES:
         return PolicyEvaluation(
             result=PolicyResult.deny,
-            reason=f"대상 유형 불명확('{target}') + 승인 필요 — 실행 차단",
+            reason=f"대상 유형 불명확('{target}') — 안전 우선 실행 차단",
             risk_level=risk,
             requires_approval=spec.requires_approval,
             action_id=spec.action_id,

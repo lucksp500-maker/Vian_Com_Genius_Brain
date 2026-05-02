@@ -4,18 +4,19 @@
  * Extension HUD(400px 팝업)와 다릅니다 — 이것은 /command-room 의 메인 랜딩 UI입니다.
  *
  * 흐름:
- *   1. 자연어 입력 → POST /api/v1/intent/create → ActionSpec
+ *   1. 자연어 입력 → POST /api/v1/action-spec/create → ActionSpec
  *   2. Guard 결과 표시
  *   3. risk > none 또는 requires_approval → ActionPreviewPanel 이동
  *   4. risk = none → 즉시 결과 표시
  *   5. 브라우저 명령 (저장/요약/수집) → BrowserCollectionRoom 이동
  *
- * [의존성] 연결: /api/v1/intent/create / 단독 수정 금지
+ * [수정] C-02: API_BASE '/api/v1/intent' → '/api/v1/action-spec' (hud_bridge prefix 일치)
+ * [의존성] 연결: /api/v1/action-spec/create / 단독 수정 금지
  */
 import { useReducer, useRef, useEffect, KeyboardEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const API_BASE = '/api/v1/intent'
+const API_BASE = '/api/v1/action-spec'  // C-02 Fix: was '/api/v1/intent' (404)
 
 // ─── 타입 ───────────────────────────────────────────────────────
 

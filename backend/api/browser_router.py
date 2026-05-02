@@ -177,6 +177,11 @@ async def collect_push(req: CollectRequest) -> CollectResponse:
 
     spec = result.action_spec
     from backend.core.commandos.action_spec import make_preview_url
+    # C-11 Fix: collect로 생성된 ActionSpec을 hud_bridge._store에 등록
+    # 이전에는 _store에 없어서 preview_url → GET /action-spec/{id} → 404 발생
+    from backend.core.commandos.hud_bridge import _store as _hud_store
+    _hud_store[spec.action_id] = spec
+
     return CollectResponse(
         action_id=spec.action_id,
         blocked=False,

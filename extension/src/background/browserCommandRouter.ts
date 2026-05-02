@@ -102,10 +102,11 @@ async function executeCommand(cmd: PendingCommand): Promise<void> {
     const response = await chrome.tabs.sendMessage(tab.id, {
       type: 'EXTRACT_AND_SEND',
       actionType: cmd.action_type,
-    }) as { ok: boolean; result?: DOMPayload; error?: string }
+    }) as { ok: boolean; payload?: DOMPayload; error?: string }
 
-    if (response?.ok && response.result) {
-      domPayload = response.result
+    // C-03 Fix: content script sends { ok, payload } — was { ok, result } (field mismatch)
+    if (response?.ok && response.payload) {
+      domPayload = response.payload
     }
   } catch {
     // content script 미주입 탭 (chrome://, extension:// 등) — 무시

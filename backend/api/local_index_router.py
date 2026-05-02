@@ -4,7 +4,9 @@ FastAPI 라우터: 로컬 파일 색인 + 검색 + 미리보기 API 엔드포인
 """
 from __future__ import annotations
 
-from fastapi import APIRouter, Query
+from pathlib import Path
+
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
 from backend.core.indexer.local_indexer import LocalIndexer
@@ -60,10 +62,36 @@ async def count_indexed_files() -> CountResponse:
     return CountResponse(count=count)
 
 
+# C-05: path traversal 방지 — 허용된 루트 디렉토리 외 접근 차단
+_ALLOWED_ROOTS: list[Path] = [
+    Path.home() / "Downloads",
+    Path.home() / "Documents",
+    Path.home() / "Desktop",
+]
+
+
+def _is_allowed_path(file_path: str) -> bool:
+    """파일 경로가 허용된 루트 디렉토리 내에 있는지 검사합니다."""
+    try:
+        resolved = Path(file_path).resolve()
+        return any(
+            resolved.is_relative_to(root.resolve())
+            for root in _ALLOWED_ROOTS
+        )
+    except Exception:
+        return False
+
+
 @preview_router.get("")
 async def preview_file(
     path: str = Query(description="미리보기할 파일의 절대 경로"),
 ) -> dict:
     """로컬 파일 미리보기 데이터를 반환합니다."""
+    # C-05 Fix: 허용된 디렉토리 외 경로 차단 (path traversal 방지)
+    if not _is_allowed_path(path):
+        raise HTTPException(
+            status_code=403,
+            detail=f"접근 불가 경로입니다. Downloads, Documents, Desktop 내 파일만 미리보기 가능합니다.",
+        )
     result = await _preview_engine.preview_file(path)
     return result.to_dict()

@@ -11,7 +11,7 @@ FastAPI 라우터: ActionSpec → 4-Brain Core → Guard PolicyEvaluation 엔드
 """
 from fastapi import APIRouter
 
-from backend.core.commandos.action_spec import ActionSpec
+from backend.core.commandos.action_spec import ActionSpec, RiskLevel
 from backend.core.guard.policy_engine import PolicyEvaluation, evaluate
 
 router = APIRouter(prefix="/api/v1/guard", tags=["guard"])
@@ -32,7 +32,11 @@ async def evaluate_action(spec: ActionSpec) -> PolicyEvaluation:
         brain_result = await brain_route(spec)
         enriched_spec = brain_result.enriched_spec
     except Exception:
-        # Brain Router 실패해도 Guard는 반드시 정상 진행
-        enriched_spec = spec
+        # C-08 Fix: Brain 실패 시 공격자 제공 spec 기본값(risk=none) 사용 금지
+        # → 고위험 + 승인 필수로 강제하여 allow 경로 차단
+        enriched_spec = spec.model_copy(update={
+            "risk_level": RiskLevel.high.value,
+            "requires_approval": True,
+        })
 
     return evaluate(enriched_spec)

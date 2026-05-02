@@ -23,20 +23,33 @@ from backend.core.commandos.action_spec import (
 from backend.core.commandos.ai_intent_bridge import parse_intent
 from backend.core.commandos.action_preview import build_preview
 from backend.core.guard.policy_engine import PolicyResult, evaluate
+from backend.core.audit.audit_ledger import AuditLedger, AuditRecord  # C-10
 
 router = APIRouter(prefix="/api/v1/action-spec", tags=["action-spec"])
 
 # 인메모리 저장소 — Phase 1 범위 (SQLite는 WO-010)
 _store: dict[str, ActionSpec] = {}
 
+# C-10: Audit 기록용 싱글턴
+_ledger = AuditLedger()
+
 
 @router.post("/create", response_model=ActionSpecResponse)
 async def create_action_spec(req: ActionSpecCreateRequest) -> ActionSpecResponse:
     """
-    자연어 입력 → ActionSpec 생성 → Guard 판정 → action_id 반환.
+    자연어 입력 → ActionSpec 생성 → Brain Router → Guard 판정 → action_id 반환.
     Extension HUD에서 호출합니다.
     """
     spec = await parse_intent(raw_input=req.raw_input, source=req.source)
+
+    # C-04 Fix: Brain Router를 통해 confidence_score 주입 (이전에는 Guard를 직접 호출 — Brain 우회됨)
+    try:
+        from backend.core.brain.commandos_brain_router import route as brain_route
+        brain_result = await brain_route(spec)
+        spec = brain_result.enriched_spec  # confidence_score가 채워진 spec으로 교체
+    except Exception:
+        pass  # Brain 실패해도 Guard는 반드시 정상 진행
+
     guard_eval = evaluate(spec)
     spec.guard_result = guard_eval.result.value
     spec.guard_reason = guard_eval.reason
@@ -98,6 +111,22 @@ async def execute_action(action_id: str) -> dict:
     spec.execution_state = ExecutionState.user_approved.value
     _store[action_id] = spec
 
+    # C-10 Fix: 사용자 승인 결정을 Audit에 기록 (이전에는 기록 없음)
+    try:
+        await _ledger.record(AuditRecord(
+            command=spec.intent or spec.raw_input,
+            action_spec_id=action_id,
+            intent_class=spec.intent or "",
+            risk_class=spec.risk_level,
+            guard_decision=spec.guard_result or "unknown",
+            approval_result="approved",
+            execution_result="pending_kernel",
+            confidence=spec.confidence_score,
+            raw_input=spec.raw_input,
+        ))
+    except Exception:
+        pass  # Audit 실패가 실행 흐름을 막으면 안 됨
+
     return {
         "action_id": action_id,
         "execution_state": spec.execution_state,
@@ -114,6 +143,22 @@ async def reject_action(action_id: str) -> dict:
 
     spec.execution_state = ExecutionState.user_rejected.value
     _store[action_id] = spec
+
+    # C-10 Fix: 사용자 거부 결정을 Audit에 기록 (이전에는 기록 없음)
+    try:
+        await _ledger.record(AuditRecord(
+            command=spec.intent or spec.raw_input,
+            action_spec_id=action_id,
+            intent_class=spec.intent or "",
+            risk_class=spec.risk_level,
+            guard_decision=spec.guard_result or "unknown",
+            approval_result="rejected",
+            execution_result=None,
+            confidence=spec.confidence_score,
+            raw_input=spec.raw_input,
+        ))
+    except Exception:
+        pass  # Audit 실패가 실행 흐름을 막으면 안 됨
 
     return {
         "action_id": action_id,

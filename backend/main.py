@@ -25,13 +25,15 @@ app = FastAPI(
 
 # [의존성] 연결: Chrome Extension useCommandIntent.ts / 단독 수정 금지
 # Chrome Extension에서의 localhost 호출 허용 (개발 및 로컬 운영)
+# [수정] C-01: allow_origin_regex 사용 — CORSMiddleware는 glob 지원 안 함,
+#              "chrome-extension://*" 는 literal로 처리되어 실제 Extension origin과 불일치
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5051",
         "http://localhost:5173",  # Vite dev server
-        "chrome-extension://*",  # Chrome Extension 모든 ID
     ],
+    allow_origin_regex=r"chrome-extension://.*",  # C-01 Fix: regex로 모든 Extension ID 허용
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -67,6 +67,32 @@ _COMPILED: list[tuple[str, re.Pattern[str], str]] = [
 # 제로폭/비가시 유니코드 문자 탐지 (최소 3개 이상 연속)
 _INVISIBLE_RE = re.compile(r"[\u200b\u200c\u200d\u200e\u200f\ufeff\u00ad]{3,}")
 
+# C-06 Fix: Cyrillic 동형이자 → Latin ASCII 매핑 (NFKC는 이 변환 미지원)
+# Cyrillic 문자가 Latin과 시각적으로 동일하지만 다른 코드포인트를 가짐
+# 예: і(U+0456) ≠ i(U+0069), о(U+043E) ≠ o(U+006F)
+_CYRILLIC_HOMOGLYPH_MAP = str.maketrans({
+    # Lowercase Cyrillic → Latin
+    '\u0430': 'a',  # а → a
+    '\u0435': 'e',  # е → e
+    '\u043e': 'o',  # о → o
+    '\u0440': 'p',  # р → p
+    '\u0441': 'c',  # с → c
+    '\u0445': 'x',  # х → x
+    '\u0456': 'i',  # і → i (Byelorussian-Ukrainian I)
+    # Uppercase Cyrillic → Latin
+    '\u0410': 'A',  # А → A
+    '\u0412': 'B',  # В → B
+    '\u0415': 'E',  # Е → E
+    '\u041a': 'K',  # К → K
+    '\u041c': 'M',  # М → M
+    '\u041d': 'H',  # Н → H
+    '\u041e': 'O',  # О → O
+    '\u0420': 'P',  # Р → P
+    '\u0421': 'C',  # С → C
+    '\u0422': 'T',  # Т → T
+    '\u0425': 'X',  # Х → X
+})
+
 
 # ─── 결과 타입 ──────────────────────────────────────────────────
 
@@ -119,14 +145,19 @@ class PromptInjectionShield:
         matched_names: list[str] = []
         matched_descs: list[str] = []
 
-        # 비가시 문자 탐지
-        if _INVISIBLE_RE.search(content):
+        # C-06 Fix: NFKC 정규화 + Cyrillic 동형이자 매핑
+        # NFKC: 전각문자 등 호환 변환 처리
+        # translate: і→i, о→o, е→e 등 Cyrillic 시각적 동형 → Latin ASCII 변환
+        normalized = unicodedata.normalize("NFKC", content).translate(_CYRILLIC_HOMOGLYPH_MAP)
+
+        # 비가시 문자 탐지 (정규화된 텍스트 기준)
+        if _INVISIBLE_RE.search(normalized):
             matched_names.append("invisible_chars")
             matched_descs.append("비가시 유니코드 문자 클러스터 (숨겨진 텍스트 의심)")
 
-        # 정규표현식 패턴 탐지
+        # 정규표현식 패턴 탐지 (NFKC 정규화된 텍스트로 탐지 — homoglyph 우회 차단)
         for name, pattern, desc in _COMPILED:
-            if pattern.search(content):
+            if pattern.search(normalized):
                 matched_names.append(name)
                 matched_descs.append(desc)
 
